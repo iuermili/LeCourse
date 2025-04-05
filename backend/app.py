@@ -174,14 +174,11 @@ fetch("http://localhost:8000/init_student", {
   method: "POST",
   headers: { "Content-Type": "application/json" }, 
   body: JSON.stringify({
-    undergrad: False,
-    major: "Gender Studies",
-    classes_taken: "CSCI-C335, maTH-m211"
+    major: "Computer Science"
+    courses_taken: "CSCI-C311, maTh-m211"
   }),
 })
-'''
 
-'''
 need to have selected either one grad requiremnt 
 or have inputted topics they are interested in to 
 fetch the classes
