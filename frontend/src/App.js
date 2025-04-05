@@ -123,10 +123,58 @@ function LeCourseIntro({ setShowStartAnis }) {
   );
 }
 
+  function PastCoursesScreen() {
+    return (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1 }}
+          style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: '1rem',
+          marginTop: '2rem',
+          textAlign: 'center'
+      }}
+    >
+        <h2 style={{ fontSize: '2rem', fontWeight: 'bold' }}>Enter Your Past Courses</h2>
+        <input
+          type="text"
+          placeholder="Enter your courses here"
+          style={{
+            padding: '0.75rem 1rem',
+            fontSize: '1rem',
+            borderRadius: '8px',
+            border: 'none',
+            outline: 'none',
+            minWidth: '200px',
+            backgroundColor: '#fff',
+            color: '#000',
+        }}
+      />
+        <button
+          style={{
+            padding: '0.5rem 1rem',
+            backgroundColor: '#4CAF50',
+            color: '#fff',
+            border: 'none',
+            borderRadius: '6px',
+            fontWeight: 'bold',
+            cursor: 'pointer'
+        }}
+      >
+        Submit
+      </button>
+    </motion.div>
+  );
+}
+
 function App() {
   const [moveBooks, setMoveBooks] = useState(false);
   const [showIntro, setShowIntro] = useState(false);
   const [showStartAnis, setShowStartAnis] = useState(true);
+  const [showPastCourses, setShowPastCourses] = useState(false);
 
   return (
     <div style={{ height: "100vh", background: "blue", color: "white", display: "flex", justifyContent: "center", alignItems: "center" }}>
@@ -140,6 +188,9 @@ function App() {
           {showIntro && <LeCourseIntro setShowStartAnis={setShowStartAnis}/>}
         </>
       )}
+
+      {/* Past Courses Screen*/}
+      {showIntro && !showPastCourses && <PastCoursesScreen />}
 
     </div>
   );
