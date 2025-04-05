@@ -31,7 +31,7 @@ class CourseInfo(BaseModel):
 
 # models to work with the /init_student endpoint
 class StudentInfoRequest(BaseModel):
-    '''
+    ''' if we choose to handle undergrad vs grad differently
     undergrad: bool
     '''
     major: str
@@ -41,7 +41,6 @@ class StudentInfoRequest(BaseModel):
     courses_taken: str
 
 class StudentInfoResponse(BaseModel):
-    # mapping from requirement to completed/required credits tuple
     courses_taken: List[CourseInfo]
 
 # models to work with the /fetch_courses endpoint
@@ -49,8 +48,8 @@ class CourseFilterRequest(BaseModel):
     criteria: List[str]
     interested_topics: str
 
-class CourseFilterRespone(BaseModel):
-    courses = List[CourseInfo] 
+class CourseFilterResponse(BaseModel):
+    courses_to_display = List[CourseInfo] 
       
 # helper function to call Ollama
 def call_ollama(prompt: str) -> str:
@@ -133,7 +132,7 @@ async def init_student(request: StudentInfoRequest):
          print(f"Validation Error: {e}. Model output: {model_output}")
          raise HTTPException(status_code=500, detail=f"Model output validation failed: {e}")
     
-@app.post("/fetch_clases", response_model=CourseFilterRespone)
+@app.post("/fetch_clases", response_model=CourseFilterResponse)
 async def fetch_classes(request: CourseFilterRequest):
     # have request.criteria, request.interested_topics
     """
@@ -167,7 +166,7 @@ async def fetch_classes(request: CourseFilterRequest):
         # Split by comma, strip whitespace from each code
         relevant_codes = [code.strip() for code in model_output.split(',') if code.strip()]
 
-    return CourseFilterRespone(relevant_courses=relevant_codes)
+    return CourseFilterResponse(relevant_courses=relevant_codes)
     
 '''
 fetch("http://localhost:8000/init_student", {
