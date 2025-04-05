@@ -186,7 +186,7 @@ fetch("http://localhost:8000/fetch_classes", {
   method: "POST",
   headers: { "Content-Type": "application/json" }, 
   body: JSON.stringify({
-    criteria: "A&H"
+    criteria: ["A&H", ...]
     interested_topics: "CSCI-C335, maTH-m211"
   }),
 })
