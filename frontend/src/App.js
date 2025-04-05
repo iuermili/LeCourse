@@ -78,10 +78,9 @@ function LeCourseIntro({ setShowStartAnis }) {
 
   // Update the Feather Icon when state changes
   useEffect(() => {
-    if (audioRef.current && audioRef.current.paused) {
-      // If the audio is paused, show "Play" icon
-      feather.replace();
-    }
+    // Ensure Feather Icons are replaced in DOM after render
+    console.log("Feather icons being replaced");
+    feather.replace();
   }, [isPlaying]);
 
   return (
@@ -92,7 +91,7 @@ function LeCourseIntro({ setShowStartAnis }) {
       style={{ position: "relative", textAlign: "center" }}
     >
       {/* LeBron Image */}
-      <img src="/lebron_intro.jpg" alt="LeBron Smiling" />
+      <img src="/lebron_intro.jpg" alt="LeBron Smiling" style={{ height: "400px" }} />
 
       {/* Subtitles + Play/Pause Button */}
       <div style={{ marginTop: "1rem", display: "flex", alignItems: "center", justifyContent: "center", gap: "1rem" }}>
@@ -114,10 +113,10 @@ function LeCourseIntro({ setShowStartAnis }) {
           }}
         >
           {/* Use Feather Icon for Play/Pause */}
-          <span dangerouslySetInnerHTML={{ __html: feather.icons[isPlaying ? 'pause' : 'play'].toSvg() }} />
+          <i data-feather={isPlaying ? 'pause' : 'play'}></i>
         </button>
 
-        <audio ref={audioRef} src="/lebron_intro_audio.mp3" />
+        <audio ref={audioRef} src="/audio.mp3" />
       </div>
     </motion.div>
   );
