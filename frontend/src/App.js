@@ -2,6 +2,8 @@ import React, { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import feather from "feather-icons";
 
+// Starting Animation Functions
+
 function LeBronEntrance({ setMoveBooks, moveBooks }) {
   return (
     <motion.div
@@ -59,7 +61,7 @@ function ShoppingCart() {
   );
 }
 
-function LeCourseIntro({ setShowStartAnis, setShowPastCourses }) {
+function LeCourseIntro({ setStartAnimation }) {
   const audioRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);  // Track if audio is playing
 
@@ -67,12 +69,9 @@ function LeCourseIntro({ setShowStartAnis, setShowPastCourses }) {
   const handlePlayPause = () => {
     const audio = audioRef.current;
     if (audio) {
-      if (isPlaying) {
-        audio.pause();  // Pause the audio if it's currently playing
-      } else {
-        audio.play();   // Play the audio if it's paused
-      }
-      setIsPlaying(!isPlaying);  // Toggle the playing state
+      if (isPlaying) {audio.pause();} 
+      else {audio.play();}
+      setIsPlaying(!isPlaying);  
     }
   };
 
@@ -81,10 +80,10 @@ function LeCourseIntro({ setShowStartAnis, setShowPastCourses }) {
     feather.replace();  // Static icon rendering
   }, []);
 
-  // Handle the button click to transition to the past courses screen
-  const handleTransitionToPastCourses = () => {
-    setShowPastCourses(true); // Transition to the next screen
-};
+  // Toggle the startAnimations state
+  const toggleStartAnimation = () => {
+    setStartAnimation(prevState => !prevState);  // Toggle between true and false
+  };
 
   return (
     <motion.div
@@ -105,83 +104,314 @@ function LeCourseIntro({ setShowStartAnis, setShowPastCourses }) {
         {/* Play/Pause button */}
         <button
           onClick={handlePlayPause}
-          style={{
-            padding: "0.5rem 1rem",
-            background: "#fff",
-            color: "#000",
-            border: "none",
-            borderRadius: "6px",
-            cursor: "pointer",
-            fontWeight: "bold"
-          }}
+          style={{padding: "0.5rem 1rem", background: "#fff", color: "#000", border: "none", borderRadius: "6px", cursor: "pointer", fontWeight: "bold"}}
         >
           {/* Use Feather Icon for Play/Pause */}
           <i data-feather="message-circle"></i>
         </button>
 
+        {/* Button to toggle startAnimations */}
+      <button
+        onClick={toggleStartAnimation}
+        style={{
+          padding: "0.5rem 1rem",
+          background: "#fff",
+          color: "#000",
+          border: "none",
+          borderRadius: "6px",
+          cursor: "pointer",
+          fontWeight: "bold",
+        }}
+      >
+        Start
+      </button>
+
         <audio ref={audioRef} src="/audio.mp3" />
       </div>
 
-      {/* Add a button to transition to the past courses screen */}
-      <div style={{ marginTop: "1rem" }}>
-        <button
-          onClick={handleTransitionToPastCourses}
+    </motion.div>
+  );
+}
+
+// Main Interface Functions
+function PastCoursesScreen() {
+  const [courseInput, setCourseInput] = useState("");
+  const [courses, setCourses] = useState([]);
+
+  const handleInputChange = (event) => {
+    setCourseInput(event.target.value);
+  };
+
+  const handleAddCourse = () => {
+    if (courseInput.trim() !== "") {
+      setCourses([...courses, courseInput.trim()]);
+      setCourseInput(""); // Clear input after adding
+    }
+  };
+
+  const handleKeyPress = (event) => {
+    if (event.key === "Enter") {
+      handleAddCourse();
+    }
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 100 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 1 }}
+      style={{ textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100vh" }}
+    >
+      <div style={{ marginBottom: "40px" }}>
+        <h2 style={{ fontSize: "2.5rem" }}>Enter your past courses</h2>
+        <span style={{ fontSize: "1.2rem", color: "white", display: "block", marginTop: "5px" }}>
+          Ex. CSCI-C211, CSCI-C212, CSCI-C241
+        </span>
+      </div>
+
+      <div style={{ display: "flex", alignItems: "center", marginBottom: "40px", marginTop: "40px" }}>
+        <input
+          type="text"
+          value={courseInput}
+          onChange={handleInputChange}
+          onKeyPress={handleKeyPress}
+          placeholder="Enter course name"
           style={{
-            padding: "0.5rem 1rem",
-            background: "#4CAF50",  // Green background for the button
-            color: "#fff",
+            padding: "8px",
+            width: "300px",
+            marginRight: "10px",
+            borderRadius: "20px",
+            border: "1px solid #ccc",
+            outline: 'none',
+          }}
+        />
+        <button
+          onClick={handleAddCourse}
+          style={{
+            padding: "8px 16px",
+            background: "#D4A000",
+            color: "black", // Changed text color to black
             border: "none",
-            borderRadius: "6px",
             cursor: "pointer",
-            fontWeight: "bold"
+            borderRadius: "20px",
           }}
         >
-          Enter Your Past Courses
+          Add Course
         </button>
+      </div>
+
+      {courses.length > 0 && (
+        <div style={{ marginTop: "100px", width: "80%", border: '6px solid #ccc', padding: '10px', borderRadius: '5px' }}>
+          <h3>Entered Courses:</h3>
+          <p style={{ whiteSpace: "pre-wrap", wordBreak: 'break-word' }}>
+            {courses.join(", ")}
+          </p>
+        </div>
+      )}
+    </motion.div>
+  );
+}
+
+function SelectMajor({ onMajorChange }) {
+  const majors = ["Computer Science", "Mathematics", "Physics", "Engineering", "Biology"]; // Example majors
+
+  const [selectedMajor, setSelectedMajor] = useState("");
+
+  const handleMajorChange = (event) => {
+    const major = event.target.value;
+    setSelectedMajor(major);
+    onMajorChange(major); // Notify parent component
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 100 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 1 }}
+      style={{ textAlign: "center" }}
+    >
+      <h2>Select your Major</h2>
+      <div>
+        <label htmlFor="major">Select your major:</label>
+        <select id="major" value={selectedMajor} onChange={handleMajorChange}>
+          <option value="">Select a major</option>
+          {majors.map((major) => (
+            <option key={major} value={major}>
+              {major}
+            </option>
+          ))}
+        </select>
       </div>
     </motion.div>
   );
 }
 
-function PastCoursesScreen() {
+
+// Function to display a single course
+const CourseCard = ({ course }) => {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: -100 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 1 }}
-      style={{ textAlign: "center" }}
-    >
-      <h2>Enter your past courses</h2>
-      {/* Add your form or input fields for past courses */}
-    </motion.div>
+    <div className="course-card">
+      <h3>{course.code}: {course.name}</h3>
+      <p>Credits: {course.credits}</p>
+      
+      {course.requirements_satisfied.length > 0 && (
+        <div>
+          <strong>Requirements Satisfied:</strong>
+          <ul>
+            {course.requirements_satisfied.map((req, idx) => (
+              <li key={idx}>{req}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {course.components.length > 0 && (
+        <div>
+          <strong>Course Components:</strong>
+          {course.components.map((componentList, idx) => (
+            <div key={idx}>
+              <h4>Component {idx + 1}</h4>
+              <ul>
+                {componentList.map((component, cIdx) => (
+                  <li key={cIdx}>
+                    <strong>{component.type}</strong> - Instructor: {component.instructor} at {component.time}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+// Function to render the list of courses
+const CourseList = ({ courseInfoList }) => {
+  return (
+    <div>
+      {courseInfoList.map((course, index) => (
+        <CourseCard key={index} course={course} />
+      ))}
+    </div>
+  );
+};
+
+function ChooseClasses() {
+  const [inputValue, setInputValue] = useState('');
+
+  const handleInputChange = (e) => {
+    setInputValue(e.target.value);
+  };
+
+  const handleButtonClick = () => {
+    console.log('Button clicked with input:', inputValue);
+    setInputValue(''); // Clear the input after clicking
+  };
+
+  // Test data
+  const courseInfoList = [
+    {
+      code: 'CSCI-H211',
+      name: 'Intro to Computer Science',
+      credits: 3,
+      requirements_satisfied: ['WC', 'A&H', 'INTENSIVE WRITING'],
+      components: [
+        [{ type: 'Lecture', instructor: 'Dr. Smith', time: '10:00 AM' }],
+        [{ type: 'Discussion', instructor: 'TA Brown', time: '2:00 PM' }],
+      ],
+    },
+    {
+      code: 'MATH-M118',
+      name: 'Calculus I',
+      credits: 4,
+      requirements_satisfied: ['QUANTITATIVE REASONING'],
+      components: [
+        [{ type: 'Lecture', instructor: 'Prof. Lee', time: '9:00 AM' }],
+      ],
+    },
+  ];
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', width: '600px'}}>
+      {/* Top row with two boxes */}
+      <div style={{ display: 'flex', gap: '10px' }}>
+        <div style={{ flex: 1, height: '100px', backgroundColor: 'lightblue' }}>
+          {/* Content for the first box */}
+        </div>
+        <div style={{ flex: 1, height: '100px', backgroundColor: 'lightgreen' }}>
+          {/* Content for the second box */}
+        </div>
+      </div>
+
+      {/* Show Suggested Courses */}
+      <div style={{ height: '200px', backgroundColor: 'lightcoral', overflow: 'scroll' }}>
+        <CourseList courseInfoList={courseInfoList} />
+      </div>
+
+      {/* Input bar with button */}
+      <div style={{ display: 'flex', alignItems: 'center' }}>
+        <input
+          type="text"
+          value={inputValue}
+          onChange={handleInputChange}
+          style={{ flex: 1, padding: '10px' }}
+        />
+        <button onClick={handleButtonClick} style={{ padding: '10px', marginLeft: '10px' }}>
+          Enter
+        </button>
+      </div>
+    </div>
   );
 }
 
 function App() {
   const [moveBooks, setMoveBooks] = useState(false);
   const [showIntro, setShowIntro] = useState(false);
-  const [showStartAnis, setShowStartAnis] = useState(true);
-  const [showPastCourses, setShowPastCourses] = useState(false);
+  const [startAnimations, setStartAnimation] = useState(true);
 
-  const handleIntroComplete = () => {
-    setShowPastCourses(true); // Transition to past courses screen after intro is complete
+  // Array of functions to be shown
+  const functions = [
+    () => <PastCoursesScreen />,
+    () => <SelectMajor />,
+    () => <ChooseClasses />,
+  ];
+
+  // State to track the current function index
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  // Handle next button click
+  const handleNext = () => {
+    setCurrentIndex((prevIndex) => (prevIndex + 1));
   };
 
   return (
-    <div style={{ height: "100vh", background: "blue", color: "white", display: "flex", justifyContent: "center", alignItems: "center" }}>
+    <div style={{ height: "100vh", background: "#552583", color: "white", display: "flex", justifyContent: "center", alignItems: "center" }}>
 
       {/* Starting Animations */}
-      {showStartAnis && (
+      {startAnimations && (
         <>
           {!showIntro && <LeBronEntrance setMoveBooks={setMoveBooks} moveBooks={moveBooks} />}
           {moveBooks && !showIntro && <BookAnimation setShowIntro={setShowIntro} />}
           {!showIntro && <ShoppingCart />}
-          {showIntro && <LeCourseIntro setShowStartAnis={setShowStartAnis} setShowPastCourses={setShowPastCourses} />}
+          {showIntro && <LeCourseIntro setStartAnimation={setStartAnimation} />}
         </>
       )}
 
-      {/* Show Past Courses Screen */}
-      {showPastCourses && <PastCoursesScreen />}  {/* Render the past courses screen once intro is done */}
+      {/* Show Main Interface */}
+      {!startAnimations && 
+        <div>
+          <div>
+            {/* Render the current function/content */}
+            {functions[currentIndex]()}
+          </div>
+          {currentIndex < functions.length - 1 && (
+            <button onClick={handleNext}>Next</button>
+          )}
+        </div>
+      } 
+
+
     </div>
   );
 }
