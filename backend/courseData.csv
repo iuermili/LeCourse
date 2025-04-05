@@ -1,0 +1,56 @@
+CourseID,CourseName,Field,CreditHours,Prerequisites,SemesterOffered,Time,Days,GenEd
+CS101,Intro to Computer Science,Computer Science,3,,Fall,08:00-08:50,MWF,
+CS102,Data Structures,Computer Science,3,CS101,Spring,09:00-09:50,MWF,
+CS201,Algorithms,Computer Science,3,CS102,Fall,10:00-10:50,MWF,
+CS301,Operating Systems,Computer Science,3,CS201,Spring,11:00-11:50,MWF,
+CS401,Machine Learning,Computer Science,3,CS301,Fall,13:00-13:50,MWF,
+MATH101,Calculus I,Mathematics,4,,Fall,09:00-10:15,TuTh,
+MATH102,Calculus II,Mathematics,4,MATH101,Spring,10:30-11:45,TuTh,
+MATH201,Linear Algebra,Mathematics,4,MATH102,Fall,12:00-13:15,TuTh,
+MATH301,Differential Equations,Mathematics,4,MATH201,Spring,13:30-14:45,TuTh,
+MATH401,Abstract Algebra,Mathematics,4,MATH301,Fall,15:00-16:15,TuTh,
+PHYS101,Physics I,Physics,4,,Fall,08:00-08:50,MWF,Natural Science
+PHYS102,Physics II,Physics,4,PHYS101,Spring,09:00-09:50,MWF,Natural Science
+PHYS201,Thermodynamics,Physics,4,PHYS102,Fall,10:00-10:50,MWF,Natural Science
+PHYS301,Quantum Mechanics,Physics,4,PHYS201,Spring,11:00-11:50,MWF,Natural Science
+PHYS401,Advanced Electrodynamics,Physics,4,PHYS301,Fall,13:00-13:50,MWF,
+ENG101,English Composition I,English,3,,Fall,09:00-10:15,TuTh,Arts & Humanities
+ENG102,English Composition II,English,3,ENG101,Spring,10:30-11:45,TuTh,Arts & Humanities
+ENG201,American Literature,English,3,ENG102,Fall,12:00-13:15,TuTh,Arts & Humanities
+ENG301,Shakespeare Studies,English,3,ENG201,Spring,13:30-14:45,TuTh,Arts & Humanities
+ENG401,Modern Poetry,English,3,ENG301,Fall,15:00-16:15,TuTh,
+BIOL101,General Biology I,Biology,4,,Fall,08:00-08:50,MWF,Natural Science
+BIOL102,General Biology II,Biology,4,BIOL101,Spring,09:00-09:50,MWF,Natural Science
+BIOL201,Genetics,Biology,4,BIOL102,Fall,10:00-10:50,MWF,Natural Science
+BIOL301,Cell Biology,Biology,4,BIOL201,Spring,11:00-11:50,MWF,Natural Science
+BIOL401,Ecology,Biology,4,BIOL301,Fall,13:00-13:50,MWF,
+CHEM101,General Chemistry I,Chemistry,4,,Fall,09:00-10:15,TuTh,Natural Science
+CHEM102,General Chemistry II,Chemistry,4,CHEM101,Spring,10:30-11:45,TuTh,Natural Science
+CHEM201,Organic Chemistry I,Chemistry,4,CHEM102,Fall,12:00-13:15,TuTh,Natural Science
+CHEM301,Physical Chemistry,Chemistry,4,CHEM201,Spring,13:30-14:45,TuTh,Natural Science
+CHEM401,Biochemistry,Chemistry,4,CHEM301,Fall,15:00-16:15,TuTh,
+ECON101,Principles of Microeconomics,Economics,3,,Fall,08:00-08:50,MWF,
+ECON102,Principles of Macroeconomics,Economics,3,ECON101,Spring,09:00-09:50,MWF,
+ECON201,Intermediate Microeconomics,Economics,3,ECON102,Fall,10:00-10:50,MWF,
+ECON301,Econometrics,Economics,3,ECON201,Spring,11:00-11:50,MWF,
+ECON401,International Economics,Economics,3,ECON301,Fall,13:00-13:50,MWF,
+PSYC101,Introduction to Psychology,Psychology,3,,Fall,09:00-10:15,TuTh,
+PSYC102,Developmental Psychology,Psychology,3,PSYC101,Spring,10:30-11:45,TuTh,
+PSYC201,Cognitive Psychology,Psychology,3,PSYC102,Fall,12:00-13:15,TuTh,
+PSYC301,Abnormal Psychology,Psychology,3,PSYC201,Spring,13:30-14:45,TuTh,
+PSYC401,Neuropsychology,Psychology,3,PSYC301,Fall,15:00-16:15,TuTh,
+HIST101,World History I,History,3,,Fall,08:00-08:50,MWF,World Culture
+HIST102,World History II,History,3,HIST101,Spring,09:00-09:50,MWF,World Culture
+HIST201,American History,History,3,HIST102,Fall,10:00-10:50,MWF,World Culture
+HIST301,European History,History,3,HIST201,Spring,11:00-11:50,MWF,World Culture
+HIST401,History of Science,History,3,HIST301,Fall,13:00-13:50,MWF,
+ART101,Art Appreciation,Art,3,,Fall,09:00-10:15,TuTh,Arts & Humanities
+ART102,Drawing Fundamentals,Art,3,ART101,Spring,10:30-11:45,TuTh,Arts & Humanities
+ART201,Painting Techniques,Art,3,ART102,Fall,12:00-13:15,TuTh,Arts & Humanities
+ART301,Art History,Art,3,ART201,Spring,13:30-14:45,TuTh,Arts & Humanities
+ART401,Sculpture,Art,3,ART301,Fall,15:00-16:15,TuTh,
+ENV101,Environmental Science I,Environmental Science,4,,Fall,08:00-08:50,MWF,Natural Science
+ENV102,Environmental Science II,Environmental Science,4,ENV101,Spring,09:00-09:50,MWF,Natural Science
+ENV201,Ecology and Conservation,Environmental Science,4,ENV102,Fall,10:00-10:50,MWF,Natural Science
+ENV301,Environmental Policy,Environmental Science,4,ENV201,Spring,11:00-11:50,MWF,Natural Science
+ENV401,Climate Change Studies,Environmental Science,4,ENV301,Fall,13:00-13:50,MWF,
