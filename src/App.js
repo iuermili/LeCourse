@@ -1,23 +1,33 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import { motion } from "framer-motion";  
 
 function App() {
+  const [moveBooks, setmoveBooks] = useState(false);
+  const [showText, setShowText] = useState(false);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+    <div style={{ height: "100vh", background: "blue", color: "white", display: "flex", justifyContent: "center", alignItems: "center" }}>
+      <motion.img
+        src="/lebron.png"
+        alt="LeBron"
+        initial={{ x: -300, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        transition={{ duration: 1 }}
+        style={{ height: "200px" }}
+        onAnimationComplete={() => setShowText(true)} 
+      />
+
+      {showText && (
+        <motion.h1
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1 }}
+          style={{ marginTop: "20px" }}
         >
-          Learn React
-        </a>
-      </header>
+          LeCourse
+        </motion.h1>
+      )}
+
     </div>
   );
 }
