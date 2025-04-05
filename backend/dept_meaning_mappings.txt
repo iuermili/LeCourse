@@ -1,0 +1,102 @@
+AAAD	African American and African Diaspora Studies
+AADM	Arts Administration
+AAST	Asian American Studies
+ABEH	Animal Behavior
+AERO	Aerospace Studies (Air Force)
+AFRI	African Studies
+AMST	American Studies
+ANAT	Anatomy
+ANTH	Anthropology
+ARTH	Art History
+ASCS	Arts & Sciences Career Services
+AST	Astronomy
+BIOC	Biochemistry
+BIOL	Biology
+BIOT	Biotechnology
+BUEX	Business Global Executive Management
+BUKD	Kelley Direct-MBA
+BUKX	Kelley Direct-MBA
+BUS	Business
+CEUS	Central Eurasian Studies
+CHEM	Chemistry
+CJUS	Criminology and Criminal Justice
+CLAS	Classical Studies
+CLLC	Collins Living-Learning Center
+CMCL	Communication & Culture
+CMLT	Comparative Literature
+COGS	Cognitive Science Program
+COLL	College of Arts and Sciences
+CSCI	Computer Science
+CTIH	Center for Theoretical Inquiry in the Humanities
+CULS	Cultural Studies
+DSCI	Data Science
+EALC	East Asian Languages and Cultures
+EAS	Earth and Atmospheric Sciences
+ECON	Economics
+EDUC	Education
+ENG	English
+ENGR	Engineering
+EURO	Institute for European Studies
+FOLK	Folklore and Ethnomusicology
+FRIT	French and Italian
+GEOG	Geography
+GER	Germanic Studies
+GNDR	Gender Studies
+GRAD	University Graduate School
+HISP	Spanish and Portuguese
+HIST	History
+HON	Hutton Honors College
+HPSC	History and Philosophy of Science
+HUBI	Human Biology
+ILS	Information & Library Science
+IMP	Individualized Major Program
+INFO	Informatics
+INPG	International Programs
+INST	India Studies
+INTL	International Studies
+JSTU	Jewish Studies
+KINS	Kinsey Institute
+LAMP	Liberal Arts and Management Program
+LATS	Latino Studies
+LAW	Law
+LING	Linguistics
+LSTU	Labor Studies Program
+LTAM	Center for Latin American and Caribbean Studies
+MATH	Mathematics
+MED	Medical Sciences
+MELC	Middle Eastern Languages and Cultures
+MEST	Medieval Studies
+MIL	Military Science (Army)
+MSCH	Media School
+MSCI	Medical Sciences
+MUS	Music
+NEUS	Neural Sciences
+NURS	Nursing
+OPT	Optometry
+OVST	Education Abroad
+PACE	Political and Civic Engagement Program
+PHIL	Philosophy
+PHYS	Physics
+POLS	Political Science
+PSY	Psychological & Brain Sciences
+REEI	Russian and East European Institute
+REL	Religious Studies
+REN	Renaissance Studies
+SEAS	Southeast Asian Studies
+SGIS	Hamilton Lugar School of Global & International Studies
+SICE	School of Informatics, Computing, and Engineering
+SLAV	Slavic and East European Languages and Cultures
+SLIS	School of Library and Information Science
+SLST	Second Language Studies
+SOAAD	School of Art, Architecture + Design
+SOC	Sociology
+SPCN	SPEA Connect
+SPEA	Public and Environmental Affairs
+SPH	Public Health
+SPHS	Speech and Hearing Sciences
+STAT	Statistics
+SWK	Social Work
+THTR	Theatre and Drama
+TOPT	Optometric Technology
+VICT	Victorian Studies
+VSCI	Vision Science
