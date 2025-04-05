@@ -76,12 +76,10 @@ function LeCourseIntro({ setShowStartAnis, setShowPastCourses }) {
     }
   };
 
-  // Update the Feather Icon when state changes
+  // Replace feather icons in the component when it renders
   useEffect(() => {
-    // Ensure Feather Icons are replaced in DOM after render
-    console.log("Feather icons being replaced");
-    feather.replace();
-  }, [isPlaying]);
+    feather.replace();  // Static icon rendering
+  }, []);
 
   // Handle the button click to transition to the past courses screen
   const handleTransitionToPastCourses = () => {
@@ -118,7 +116,7 @@ function LeCourseIntro({ setShowStartAnis, setShowPastCourses }) {
           }}
         >
           {/* Use Feather Icon for Play/Pause */}
-          <i data-feather={isPlaying ? 'pause' : 'play'}></i>
+          <i data-feather="message-circle"></i>
         </button>
 
         <audio ref={audioRef} src="/audio.mp3" />
