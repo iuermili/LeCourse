@@ -59,7 +59,7 @@ function ShoppingCart() {
   );
 }
 
-function LeCourseIntro({ setShowStartAnis }) {
+function LeCourseIntro({ setShowStartAnis, setShowPastCourses }) {
   const audioRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);  // Track if audio is playing
 
@@ -82,6 +82,11 @@ function LeCourseIntro({ setShowStartAnis }) {
     console.log("Feather icons being replaced");
     feather.replace();
   }, [isPlaying]);
+
+  // Handle the button click to transition to the past courses screen
+  const handleTransitionToPastCourses = () => {
+    setShowPastCourses(true); // Transition to the next screen
+};
 
   return (
     <motion.div
@@ -118,53 +123,38 @@ function LeCourseIntro({ setShowStartAnis }) {
 
         <audio ref={audioRef} src="/audio.mp3" />
       </div>
+
+      {/* Add a button to transition to the past courses screen */}
+      <div style={{ marginTop: "1rem" }}>
+        <button
+          onClick={handleTransitionToPastCourses}
+          style={{
+            padding: "0.5rem 1rem",
+            background: "#4CAF50",  // Green background for the button
+            color: "#fff",
+            border: "none",
+            borderRadius: "6px",
+            cursor: "pointer",
+            fontWeight: "bold"
+          }}
+        >
+          Enter Your Past Courses
+        </button>
+      </div>
     </motion.div>
   );
 }
 
-  function PastCoursesScreen() {
-    return (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1 }}
-          style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          gap: '1rem',
-          marginTop: '2rem',
-          textAlign: 'center'
-      }}
+function PastCoursesScreen() {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: -100 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 1 }}
+      style={{ textAlign: "center" }}
     >
-        <h2 style={{ fontSize: '2rem', fontWeight: 'bold' }}>Enter Your Past Courses</h2>
-        <input
-          type="text"
-          placeholder="Enter your courses here"
-          style={{
-            padding: '0.75rem 1rem',
-            fontSize: '1rem',
-            borderRadius: '8px',
-            border: 'none',
-            outline: 'none',
-            minWidth: '200px',
-            backgroundColor: '#fff',
-            color: '#000',
-        }}
-      />
-        <button
-          style={{
-            padding: '0.5rem 1rem',
-            backgroundColor: '#4CAF50',
-            color: '#fff',
-            border: 'none',
-            borderRadius: '6px',
-            fontWeight: 'bold',
-            cursor: 'pointer'
-        }}
-      >
-        Submit
-      </button>
+      <h2>Enter your past courses</h2>
+      {/* Add your form or input fields for past courses */}
     </motion.div>
   );
 }
@@ -175,6 +165,10 @@ function App() {
   const [showStartAnis, setShowStartAnis] = useState(true);
   const [showPastCourses, setShowPastCourses] = useState(false);
 
+  const handleIntroComplete = () => {
+    setShowPastCourses(true); // Transition to past courses screen after intro is complete
+  };
+
   return (
     <div style={{ height: "100vh", background: "blue", color: "white", display: "flex", justifyContent: "center", alignItems: "center" }}>
 
@@ -184,13 +178,12 @@ function App() {
           {!showIntro && <LeBronEntrance setMoveBooks={setMoveBooks} moveBooks={moveBooks} />}
           {moveBooks && !showIntro && <BookAnimation setShowIntro={setShowIntro} />}
           {!showIntro && <ShoppingCart />}
-          {showIntro && <LeCourseIntro setShowStartAnis={setShowStartAnis}/>}
+          {showIntro && <LeCourseIntro setShowStartAnis={setShowStartAnis} setShowPastCourses={setShowPastCourses} />}
         </>
       )}
 
-      {/* Past Courses Screen*/}
-      {showIntro && !showPastCourses && <PastCoursesScreen />}
-
+      {/* Show Past Courses Screen */}
+      {showPastCourses && <PastCoursesScreen />}  {/* Render the past courses screen once intro is done */}
     </div>
   );
 }
