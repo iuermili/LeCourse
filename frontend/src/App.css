@@ -104,8 +104,8 @@ button {
   transition: all 0.4s ease-in-out;
 }
 
-select option:hover {
-  box-shadow: 0 0 10px 100px var(--selected-course-background) inset !important;
+button:hover {
+  background: var(--selected-course-background);
 }
 
 .next {
@@ -119,6 +119,7 @@ select option:hover {
   background: var(--course-background);
   padding: 0.5rem 1rem; 
   border-radius: 4px;
+  text-align: left;
 }
 
 /* Drop-downs */
