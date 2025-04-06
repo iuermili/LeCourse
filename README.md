@@ -10,7 +10,7 @@ We built a web application with a React frontend and a Python FastAPI backend ut
 
 ## User Guide
 
-LeBron James will guide you through your course selection in this AI-powered course selection tool. Simply select your major and type in what classes you have already been taken. At this point, classes unavailable due to insufficient prerequisites will be filtered out. Then, you will be taken to the dashboard in which you can choose to filter data by category you want to fill (GenEd, major), or even tell AI Lebron what classes you might be interested in. The tool is most powerful when combining filtering functionality with AI functionality, allowing you to narrow down exactly the courses you want.
+LeBron James will guide you through your course selection in this AI-powered course selection tool. Simply select your major and type in what classes you have already taken. At this point, classes unavailable due to insufficient prerequisites, and the classes that you have already taken will be filtered out. Then, you will be taken to the dashboard in which you can tell AI Lebron what classes you might be interested in. AI Lebron will narrow down exactly the courses you want and then suggest them to you. Finally, you have the option to hold onto the suggested courses.
 
 ## Usage
 
