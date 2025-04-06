@@ -261,10 +261,9 @@ const CourseList = ({ courseInfoList, selectedCourses, setSelectedCourses }) => 
   );
 };
 
+<<<<<<< HEAD
 function createRequirementTable({fetchFilteredCourses, filters, setFilters, selectedCourses, courseInfoList, setCourseInfoList}) {
-
-
-    const requirements = ["Arts & Humanities", "World Cultures", "Natural Science", "Major"]
+  const requirements = ["Arts & Humanities", "World Cultures", "Natural Science", "Major"]
 
   const gridStyle = {
     display: 'grid',
@@ -355,6 +354,8 @@ function createRequirementTable({fetchFilteredCourses, filters, setFilters, sele
   );
 }
 
+=======
+>>>>>>> e1c7a7ff0cb183162d16bf2e09c47176a3e3b4c0
 function ChooseClasses({ fetchFilteredCourses, courseInfoList, setCourseInfoList, filters, setFilters, interests, setInterests }) {
   const [inputValue, setInputValue] = useState('');
   const [selectedCourses, setSelectedCourses] = useState([]);
@@ -382,11 +383,11 @@ function ChooseClasses({ fetchFilteredCourses, courseInfoList, setCourseInfoList
                 <li key={index} className="course-item">{course}</li>
               ))}
             </ul>
-          </div>
+          {/* </div>
           <div className="subColumns">
             <h3>Requirements</h3>
             {createRequirementTable({fetchFilteredCourses, requirementsData, filters, setFilters, selectedCourses, courseInfoList, setCourseInfoList})}
-          </div>
+          </div> */}
         </div>
         <div className="columns">
           <h3>Suggested Courses</h3>
