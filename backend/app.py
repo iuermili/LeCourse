@@ -8,9 +8,20 @@ from typing import List
 app = FastAPI()
 
 # configuration
-OLLAMA_API_URL = "http://localhost:11434/api/chat"  # Default Ollama API endpoint
-MODEL_NAME = "phi3:mini" 
+OLLAMA_API_URL = "http://localhost:11434/api/chat"  # default Ollama API endpoint
+MODEL_NAME = "phi3:mini"
 CONTEXT = None
+# gather the course data to create an intial context for the llm
+try:
+    COURSE_DATA_INPUT = open("courseData.csv")
+    COURSE_DATA = "\n".join([line for line in COURSE_DATA_INPUT])
+    COURSE_DATA_INPUT.close()
+except OSError:
+    COURSE_DATA = "" # could be handled better; maybe provide dummy data
+INITIAL_CONTEXT_PROMPT = f"""
+    Here is course data taken from a csv file:\n{COURSE_DATA}\n
+    Please use this for all subsequent prompts.
+"""
 
 # models to store course information
 class CourseSection(BaseModel):
@@ -56,10 +67,10 @@ class CourseFilterRequest(BaseModel):
 
 class CourseFilterResponse(BaseModel):
     llm_indentified_criteria : str
-    courses_to_display = List[CourseInfo] 
+    courses_to_display: List[CourseInfo] 
       
 # sends prompt to ollama and 
-async def call_ollama(prompt: str, use_context: bool=False):
+async def call_ollama(prompt: str):
     payload = {
         "model": MODEL_NAME,
         "stream": False, # get full message at once
@@ -67,15 +78,14 @@ async def call_ollama(prompt: str, use_context: bool=False):
             "temperature": 0.1 # lower temperature for more deterministic output (good for JSON)
         },
     }
-    # default message; pass the prompt to ollama
-    messages = [{"role": "user", "content": prompt}]
-    # don't use the context unless that is specified
-    if use_context:
+    # default message is simply the prompt
+    messages = [{"role": "user", "content": prompt}]    
+    if CONTEXT is None:
+          # TODO fix context setup prompt
+          messages.insert(0, {"role": "system", "content": INITIAL_CONTEXT_PROMPT},)
+    else:
         payload["context"] = CONTEXT # use the context (course data)
-        # 
-        if CONTEXT is None:
-             # TODO fix context setup prompt
-             messages.insert(0, {"role": "system", "content": f"You are an academic advisor. Here is context:\n{COURSE_CODE_MAPPING}"},)
+    # add the messages to pass to ollama
     payload["messages"] = messages
 
     try:
@@ -97,7 +107,6 @@ async def call_ollama(prompt: str, use_context: bool=False):
         print(f"Error calling Ollama chat: {e}")
         raise HTTPException(status_code=503, detail=f"Failed to communicate with Ollama service: {e}")
     except Exception as e:
-        # Clean up context if call failed maybe? Depends on strategy.
         print(f"Error processing Ollama chat response: {e}")
         raise HTTPException(status_code=500, detail=f"Error processing response from Ollama chat: {e}")
 
@@ -166,6 +175,39 @@ async def fetch_classes(request: CourseFilterRequest):
     # TODO get valid courses from database based on model_output and/or request.criteria
     return CourseFilterResponse(llm_indentified_criteria=model_output, courses_to_display=[])
     
+
+# redefined here to easily modify while testing
+INITAL_CONTEXT_PROMPT = f"""
+    Here is course data taken from a csv file:\n{COURSE_DATA}\n
+    Please use this for subsequent prompts.
+"""
+courses_tested_ex = 'CS101,math233, Luffy21 eNg201, CS101, MATH202'
+init_student_test_prompt = f"""
+    You are an expert academic transcript parser. Analyze the following list of courses taken by a student. 
+    Extract the course ids (e.g., PHYS301). Format the output strictly as list of course ids separated by commas.
+    If you cannot match a course with course data provided earlier, do not include it. If no courses are matched 
+    return ''.Output ONLY the comma separated course ids in a string, without any introductory text, explanations, 
+    or markdown formatting. 
+    Input Text:
+    {courses_tested_ex}
+    Comma Separated Output:
+"""
+interested_topics_ex = 'CS101,math233, Luffy21 eNg201, CS101, MATH202'
+fetch_classes_test_prompt = f"""
+    You are an academic advisor assistant. Based on the student's interests provided below, identify which of 
+    the listed courses they have already taken might be relevant to those interests. List ONLY the course ids (e.g., CS 101) 
+    of the relevant classes, separated by commas. Do not include explanations or any other text. If no courses seem relevant, 
+    output 'None'.
+    Student Interests:
+    {interested_topics_ex}
+    Relevant Course Codes:
+"""
+async def test(prompt):
+    output = await call_ollama(prompt)
+    print(output)
+
+test(init_student_test_prompt)
+
 # frontend js code for reference
 '''
 fetch("http://localhost:8000/init_student", {
