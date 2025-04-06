@@ -84,11 +84,6 @@ async def init_student(request: StudentInfoRequest):
         WHERE CourseID = ?
         """, courses_data)
 
-        cur.executemany("""
-        DELETE FROM Requirements
-        WHERE CourseID = ?
-        """, courses_data)
-
         con.commit()
 
         # TODO make sure you send properly created list of CourseInfo
