@@ -17,6 +17,14 @@ LeBron James will guide you through your course selection in this AI-powered cou
 You will need to run both the frontend and backend for the full LeCourse experience. This can be done on the same machine, so feel free to try LeCourse out!
 
 ### Frontend Setup
+Before running this project, ensure you have the following installed:
+- Node.js (v14 or higher)
+- npm (v6 or higher)
+
+```npm install```
+> Run this command to install all required packages
+```npm start```
+> Run this command to compile the program
 
 ### Backend Setup
 
