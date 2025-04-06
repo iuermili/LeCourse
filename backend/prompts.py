@@ -8,10 +8,9 @@ init_student_prompt = f"""
 
 
 fetch_classes_prompt = f"""
-    You are an academic advisor assistant. Based on the student's interests provided below, identify which of 
-    the listed courses they have already taken might be relevant to those interests. List ONLY the course ids (e.g., CS 101) 
-    of the relevant classes, separated by commas. Do not include explanations or any other text. If no courses seem relevant, 
-    output 'None'.
+    The following context will be a list of courses and the topics they cover, separated by commas. An example of this would be: "BIOL101:Biology".
+    They will all be exactly in that form: ({context})
+    Based on the student's interests provided below, identify which of the listed courses might be relevant to those interests. List ONLY the course ID of the relevant classes, separated by commas. Do not include explanations or any other text. If no courses seem relevant, output 'None'
     Student Interests:
 """
 

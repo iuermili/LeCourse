@@ -27,11 +27,8 @@ class StudentInfoResponse(BaseModel):
 # models to work with the /fetch_courses endpoint
 class CourseFilterRequest(BaseModel):
     criteria: List[str] # e.g. ['Arts & Humanities', 'Major', ...] or []
-    interested_topics: str # e.g. 'i love you LeCourse and i love math'
+    prompt: str # e.g. 'i love you LeCourse and i love math'
 
 class CourseFilterResponse(BaseModel):
-    # differentiated the two; may want to add a note onto each
-    # llm recommended course to say that LeCourse recommends it
-    llm_recommended_courses : List[CourseInfo] 
     filtered_courses: List[CourseInfo] 
       

@@ -146,27 +146,75 @@ def init_student(request: StudentInfoRequest):
 
 @app.post("/fetch_classes", response_model=CourseFilterResponse)
 def fetch_classes(request: CourseFilterRequest):
-    # have request.criteria, request.interested_topics
-    # TODO fix prompt
-    model_output = generate_content(fetch_classes_prompt).strip()
+    model_output = generate_content(fetch_classes_prompt + request.prompt).strip().split(", ")
+    print(model_output)
+     
+    courseinfo = filterData(request.criteria, model_output)
+    print(request.criteria)
 
-    # TODO get valid courses from database based on model_output and/or request.criteria
-    return CourseFilterResponse(llm_indentified_criteria=model_output, courses_to_display=[])
+    return CourseFilterResponse(filtered_courses=courseinfo)
     
-courses_tested_ex = 'CS101,math233, Luffy21 eNg201, CS101, MATH202'
 
-def filterData(fields: list[str]) -> list[CourseInfo]:
+def filterData(attributes: list[str], courses: list[str]) -> list[CourseInfo]:
 
     conn = sqlite3.connect('CourseScheduler.db')
     cursor = conn.cursor()
 
-    placeholders = ','.join('?' for _ in range(len(fields)))
+    # Fetch everything if no filter specified
+    if not attributes and not courses: 
+        cursor.execute(
+        "SELECT * FROM Courses")
+        rows = cursor.fetchall()
+        all_courses = [
+            CourseInfo(
+                code=row[0], 
+                name=row[1], 
+                field=row[2], 
+                credits=row[3], 
+                prerequisites=row[4], 
+                time=row[5], 
+                days=row[6], 
+                gened=row[7]
+            ) 
+            for row in rows
+        ]
+        return all_courses
 
-    cursor.execute(
-        f"SELECT * FROM Courses WHERE Field IN ({placeholders})", fields)
+          
 
+    attribute_placeholders = ','.join('?' for _ in range(len(attributes)))
+    courses_placeholders = ','.join('?' for _ in range(len(courses)))
+
+    if not attributes:
+        cursor.execute(
+            f"SELECT * FROM Courses WHERE CourseID IN ({courses_placeholders})", 
+            tuple(courses)  
+        )
+    elif not courses:
+        cursor.execute(
+            f"SELECT * FROM Courses WHERE Field IN ({attribute_placeholders})", 
+            tuple(attributes)  
+        )
+    else:
+        cursor.execute(
+        f"SELECT * FROM Courses WHERE GenEd IN ({attribute_placeholders}) AND CourseID IN ({courses_placeholders})", tuple(attributes + courses))
+    
+ 
     rows = cursor.fetchall()
-    result = [CourseInfo(*row) for row in rows]
+    result = [
+        CourseInfo(
+            code=row[0], 
+            name=row[1], 
+            field=row[2], 
+            credits=row[3], 
+            prerequisites=row[4], 
+            time=row[5], 
+            days=row[6], 
+            gened=row[7]
+        ) 
+        for row in rows
+    ]
+
 
     conn.close()
     return result
