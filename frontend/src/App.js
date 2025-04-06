@@ -256,7 +256,7 @@ const CourseList = ({ courseInfoList, selectedCourses, setSelectedCourses }) => 
   );
 };
 
-function ChooseClasses({ fetchFilteredCourses, courseInfoList, setCourseInfoList, filters, setFilters, interests, setInterests }) {
+function ChooseClasses({ fetchFilteredCourses, courseInfoList, setCourseInfoList}) {
   const [inputValue, setInputValue] = useState('');
   const [selectedCourses, setSelectedCourses] = useState([]);
 
@@ -265,8 +265,7 @@ function ChooseClasses({ fetchFilteredCourses, courseInfoList, setCourseInfoList
   };
 
   const handleButtonClick = () => {
-    setInterests(inputValue);
-    fetchFilteredCourses();
+    fetchFilteredCourses(inputValue);
     setInputValue("");
   };
 
@@ -327,8 +326,6 @@ function App() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isSendingData, setIsSendingData] = useState(false);
   const [courseInfoList, setCourseInfoList] = useState([]);
-  const [filters, setFilters] = useState([]);
-  const [interests, setInterests] = useState('');
 
   useEffect(() => {
     if (dunkComplete) {
@@ -342,7 +339,7 @@ function App() {
   const functions = [
     () => <SelectMajor onMajorChange={setSelectedMajor} />,
     () => <PastCoursesScreen setPastCourses={setPastCourses} major={major} onCoursesSubmit={setPastCourses} />, // Pass major and onCoursesSubmit
-    () => <ChooseClasses fetchFilteredCourses={fetchFilteredCourses} courseInfoList={courseInfoList} filters={filters} setFilters={setFilters} interests={interests} setInterests={setInterests}/>,
+    () => <ChooseClasses fetchFilteredCourses={fetchFilteredCourses} courseInfoList={courseInfoList} />,
   ];
 
   const sendDataToBackend = async () => {
@@ -379,10 +376,9 @@ function App() {
     }
   };
 
-  const fetchFilteredCourses = async () => {
+  const fetchFilteredCourses = async (interests) => {
     try {
       const requestData = {
-        criteria: filters,
         prompt: interests,
       };
       const fetchedCourses = await make_request(requestData, fetch_classes_endpoint_path);
