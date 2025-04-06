@@ -40,6 +40,11 @@
 
 
 /* Heading */
+h1 {
+  padding: 0;
+  margin: 0;
+}
+
 h2 {
   font-size: 2.5rem;
 }
@@ -102,6 +107,7 @@ button {
   font-weight: 600;
   letter-spacing: 1px;
   transition: all 0.4s ease-in-out;
+  text-transform: uppercase;
 }
 
 button:hover {
@@ -225,4 +231,64 @@ option:hover {
   .subColumns {
     height: 50%;
   }
+}
+
+/* Calendar */
+.calendar-button {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.calendar-button:hover {
+  background-color: #45a049;
+  transform: scale(1.05);
+}
+
+.button-container {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.button-container button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Tooltip styles */
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 120px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -60px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
 }

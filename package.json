@@ -20,6 +20,10 @@
   },
   "homepage": "https://github.com/iuermili/LeCourse#readme",
   "dependencies": {
-    "react-scripts": "^5.0.1"
+    "json2csv": "^6.0.0-alpha.2",
+    "jspdf": "^3.0.1",
+    "os-browserify": "^0.3.0",
+    "react-scripts": "^5.0.1",
+    "stream-browserify": "^3.0.0"
   }
 }
