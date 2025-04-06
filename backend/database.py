@@ -51,8 +51,8 @@ with open('majorRequirements.csv', newline='') as csvfile:
     reader = csv.DictReader(csvfile)
     for row in reader:
         reqs_data.append((
-            row["course"], 
-            row["major"]
+            row["CourseID"], 
+            row["Major"]
         ))
 
 cur.executemany("""

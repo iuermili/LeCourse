@@ -3,6 +3,7 @@ import requests
 from pydantic import BaseModel
 from fastapi import FastAPI, HTTPException
 from typing import List
+import sqlite3
 
 
 app = FastAPI()
@@ -89,7 +90,7 @@ async def call_ollama(prompt: str):
     payload["messages"] = messages
 
     try:
-        response = requests.post(OLLAMA_API_URL, json=payload, timeout=120) # increase timeout if needed
+        response = await requests.post(OLLAMA_API_URL, json=payload, timeout=120) # increase timeout if needed
         response.raise_for_status() # raise an exception for bad status codes
         response_data = response.json()
 
@@ -114,35 +115,39 @@ async def call_ollama(prompt: str):
 @app.post("/init_student", response_model=StudentInfoResponse)
 # receive request.undergrad, request.major, request.courses_taken
 async def init_student(request: StudentInfoRequest):
-    # parses a raw string of class listings into structured JSON.
-    prompt = f"""You are an expert academic transcript parser. Analyze the following list of courses taken by a student. 
-    Extract the course codes (e.g., CS101). Format the output strictly as a JSON string containing a list of objects, 
-    where each object has a "code" key. If you cannot extract a code, you can omit the key or set it to null. Output ONLY
-    the JSON string, without any introductory text, explanations, or markdown formatting.
-    Input Text:
-    {request.courses_taken}
-    JSON Output:
-    """
-    model_output = call_ollama(prompt)
+
+    courses_taken = await call_ollama(init_student_test_prompt + request.courses_taken)
     try:
-      # the model should output *only* JSON. Sometimes they add markdown fences (```json ... ```)
-        if model_output.startswith("```json"):
-            model_output = model_output[7:]
-        if model_output.endswith("```"):
-            model_output = model_output[:-3]
+        # should return string class IDs separated by commas
+        courses_taken = courses_taken.split(",")
 
-        parsed_json = json.loads(model_output.strip())
+        # TODO: verify each course
 
-        # basic validation - ensure it's a list
-        if not isinstance(parsed_json, list):
-             # maybe it returned {"courses": [...]}, try to extract
-             if isinstance(parsed_json, dict) and "courses" in parsed_json and isinstance(parsed_json["courses"], list):
-                 parsed_json = parsed_json["courses"]
-             else:
-                raise ValueError("Model did not return a JSON list as expected.")
-             
+        con = sqlite3.connect("CourseScheduler.db")
+        cur = con.cursor()
+
+        cur.executemany("""
+        SELECT CreditHours, GenEd
+        FROM Courses
+        WHERE CourseID = ?
+        """, courses_data)
+
+        courses_taken_to_send = cur.fetchall()
+        # (credit hours, GenEd)
+
+        
+        cur.executemany("""
+        DELETE FROM Courses
+        WHERE CourseID = ?
+        """, courses_data)
+
+        cur.executemany("""
+        DELETE FROM Requirements
+        WHERE CourseID = ?
+        """, courses_data)
+
         # TODO make sure you send properly created list of CourseInfo
-        return StudentInfoResponse(courses=[])
+        return StudentInfoResponse(InitResponse=courses_taken_to_send)
 
     except json.JSONDecodeError:
         print(f"Failed to decode JSON from model output: {model_output}")
@@ -189,8 +194,6 @@ init_student_test_prompt = f"""
     return ''.Output ONLY the comma separated course ids in a string, without any introductory text, explanations, 
     or markdown formatting. 
     Input Text:
-    {courses_tested_ex}
-    Comma Separated Output:
 """
 interested_topics_ex = 'CS101,math233, Luffy21 eNg201, CS101, MATH202'
 fetch_classes_test_prompt = f"""
@@ -207,6 +210,7 @@ async def test(prompt):
     print(output)
 
 test(init_student_test_prompt)
+
 
 # frontend js code for reference
 '''
