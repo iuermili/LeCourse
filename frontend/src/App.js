@@ -447,7 +447,7 @@ function App() {
         interested_topics: interests,
       };
       const fetchedCourses = await make_request(requestData, fetch_classes_endpoint_path);
-      setCourseInfoList(fetchedCourses);
+      setCourseInfoList(fetchedCourses.filtered_courses);
     } catch (error) {
       console.error('Error fetching courses:', error);
     }
