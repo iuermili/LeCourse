@@ -232,12 +232,7 @@ const CourseCard = ({ course, selectedCourses, setSelectedCourses }) => {
         {course.field || course.genEdSatisfied && (
           <div>
             {course.field && <p><strong>Major Satisfied: </strong>{course.field}</p>}
-            {course.genEdSatisfied && <p><strong>GenEd Satisfied: </strong>{course.genEdSatisfied}</p>}
-          </div>
-        )}
-        {course.requirements_satisfied && course.requirements_satisfied.length > 0 && (
-          <div>
-            <p><strong>Requirements Satisfied: </strong>{course.requirements_satisfied.join(', ')}</p>
+            {course.gened && <p><strong>GenEd Satisfied: </strong>{course.gened}</p>}
           </div>
         )}
       </div>
