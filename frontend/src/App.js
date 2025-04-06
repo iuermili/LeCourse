@@ -362,41 +362,25 @@ const generatePDF = () => {
   // Get the selected course details
   const selectedCourseDetails = courseInfoList.filter(course => selectedCourses.includes(course.code));
   
-  // Plot each course on the calendar
   selectedCourseDetails.forEach(course => {
-    // Parse course days and times
     if (!course.days || !course.time) return;
-    
     const timeMatch = course.time.match(/(\d+:?\d*\s*(?:am|pm|AM|PM)?)\s*-\s*(\d+:?\d*\s*(?:am|pm|AM|PM)?)/i);
     if (!timeMatch) return;
-    
     const startTimeStr = timeMatch[1];
     const endTimeStr = timeMatch[2];
-    
     const startTime = parseTime(startTimeStr);
     const endTime = parseTime(endTimeStr);
-    
     if (startTime === null || endTime === null) return;
-    
-    // Calculate position on calendar
     const startY = calendarStartY + 10 + (startTime - startHour) * hourHeight;
     const duration = endTime - startTime;
     const blockHeight = duration * hourHeight;
-    
-    // Handle different day formats
     const dayChars = course.days.split(/[,\s]+/).filter(Boolean);
-    
     dayChars.forEach(dayChar => {
       const dayIndex = dayMapping[dayChar];
       if (dayIndex === undefined) return;
-      
       const blockX = margin + timeColumnWidth + dayIndex * dayWidth;
-      
-      // Draw course block
       pdf.setFillColor(230, 240, 255);
       pdf.rect(blockX + 1, startY, dayWidth - 1, blockHeight, 'F');
-      
-      // Draw course details
       pdf.setTextColor(0, 0, 0);
       pdf.text(course.code, blockX + 2, startY + 4);
       pdf.text(course.name.substring(0, 15) + (course.name.length > 15 ? '...' : ''), blockX + 2, startY + 8);
