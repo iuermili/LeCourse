@@ -11,11 +11,9 @@ CREATE TABLE IF NOT EXISTS Courses (
     Field TEXT, 
     CreditHours INTEGER, 
     Prerequisites TEXT, 
-    SemesterOffered TEXT, 
     Time TEXT, 
     Days TEXT, 
-    GenEd TEXT,
-    RequiredFor
+    GenEd TEXT
 )
 """)
 
@@ -28,17 +26,15 @@ with open('courseData.csv', newline='') as csvfile:
             row["CourseName"], 
             row["Field"], 
             int(row["CreditHours"]) if row["CreditHours"] else 0,
-            row["Prerequisites"] if row["Prerequisites"] else "",
-            row["SemesterOffered"], 
+            row["Prerequisites"] if row["Prerequisites"] else "", 
             row["Time"], 
             row["Days"], 
             row["GenEd"] if row["GenEd"] else "",
-            row["RequiredFor"] if row["RequiredFor"] else ""
         ))
 
 cur.executemany("""
 INSERT OR REPLACE INTO Courses
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?)
 """, courses_data)
 
 con.commit()

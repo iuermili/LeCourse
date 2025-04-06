@@ -86,6 +86,12 @@ async def init_student(request: StudentInfoRequest):
 
         con.commit()
 
+        # TODO Send courses_taken_to_send AND total major credits taken/need AND available courses in one go
+        cursor.execute(
+        "SELECT * FROM Courses", fields)
+        rows = cursor.fetchall()
+        result = [CourseInfo(*row) for row in rows]
+
         # TODO make sure you send properly created list of CourseInfo
         return StudentInfoResponse(init_response=courses_taken_to_send)
     except HTTPException as e:
@@ -119,7 +125,7 @@ async def fetch_classes(request: CourseFilterRequest):
 courses_tested_ex = 'CS101,math233, Luffy21 eNg201, CS101, MATH202'
 
 def filterData(fields: list[str]) -> list[CourseInfo]:
-    
+
     conn = sqlite3.connect('CourseScheduler.db')
     cursor = conn.cursor()
 

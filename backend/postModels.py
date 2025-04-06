@@ -20,8 +20,8 @@ class StudentInfoRequest(BaseModel):
     courses_taken: str # raw user input
 
 class StudentInfoResponse(BaseModel):
-    init_response: List[Tuple[List[str], int]] # e.g. [(['Arts & Humanities', ...], 3)] or []
-    major_credits_required: int # e.g 20 needed (this is the only non-hard-coded requirement limit) 
+    init_response: List[Tuple[int, str]] # e.g. [(3, 'Arts & Humanities')...] or []
+    major_credits: Tuple[int, int] # (taken, needed)
     all_courses_not_taken: List[CourseInfo] # all courses besides the ones already taken
 
 # models to work with the /fetch_courses endpoint
