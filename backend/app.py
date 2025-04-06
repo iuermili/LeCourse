@@ -46,10 +46,12 @@ def generate_content(prompt: str):
 def init_student(request: StudentInfoRequest):
     con = None
     try:
-       
-        courses_taken_str = generate_content(init_student_prompt + request.courses_taken)
-        if not courses_taken_str:
-            raise HTTPException(status_code=400, detail="Could not process courses taken.")
+        if request.courses_taken:
+
+            courses_taken_str = generate_content(init_student_prompt + request.courses_taken)
+        else:
+            courses_taken_str = ""
+
         # should return string class IDs separated by commas
         courses_taken = courses_taken_str.split(",")
 
@@ -82,7 +84,7 @@ def init_student(request: StudentInfoRequest):
         WHERE Field = ? AND CourseID IN ({placeholders}) 
         """, (request.major, *courses_taken))
 
-        taken = cur.fetchone()[0]
+        taken = cur.fetchone()[0] if cur.fetchone()[0] else 0
 
         cur.execute("""
             SELECT SUM(CreditHours)
@@ -90,7 +92,7 @@ def init_student(request: StudentInfoRequest):
             WHERE Field = ?
         """, (request.major,))
 
-        total_needed = cur.fetchone()[0]
+        total_needed = cur.fetchone()[0] if cur.fetchone()[0] else 15
 
         fstring = ", ".join(['?'] * len(courses_taken))
 
