@@ -9,13 +9,7 @@ app = FastAPI()
 # configuration
 OLLAMA_API_URL = "http://localhost:11434/api/chat"  # Default Ollama API endpoint
 MODEL_NAME = "phi3:mini" 
-
-# i did not want to manually create the list of mappings
-dept_meaning_mappings = []
-with open('dept_meaning_mappings.txt', 'r') as mappings:
-    for mapping in mappings:
-        dept_meaning_mappings.append(mapping.split)
-print(dept_meaning_mappings)
+CONTEXT = None
 
 # models to store course information
 class CourseSection(BaseModel):
@@ -63,51 +57,56 @@ class CourseFilterResponse(BaseModel):
     llm_indentified_criteria : str
     courses_to_display = List[CourseInfo] 
       
-# helper function to call Ollama
-def call_ollama(prompt: str) -> str:
-    """Sends a prompt to the Ollama API and returns the model's response text."""
+# sends prompt to ollama and 
+async def call_ollama(prompt: str, use_context: bool=False):
     payload = {
         "model": MODEL_NAME,
-        "prompt": prompt,
-        "stream": False, # get the full response at once
+        "stream": False, # get full message at once
         "options": {
-            "temperature": 0.1 # Lower temperature for more deterministic output (good for JSON)
-        }
+            "temperature": 0.1 # lower temperature for more deterministic output (good for JSON)
+        },
     }
-    try:
-        response = requests.post(OLLAMA_API_URL, json=payload, timeout=120) # Increase timeout if needed
-        response.raise_for_status() # Raise an exception for bad status codes
-        # Assuming the response JSON structure from Ollama is like: {"response": "...", ...}
-        # Adjust key ('response') if your Ollama version differs
-        response_data = response.json()
-        if "response" in response_data:
-             # Clean up potential leading/trailing whitespace or markdown code fences
-            return response_data["response"].strip().strip('`').strip()
-        else:
-             # Handle cases where the expected key is missing
-             print(f"Warning: 'response' key not found in Ollama output: {response_data}")
-             # Attempt to find the most likely text field or return raw JSON string for debugging
-             # This part might need adjustment based on actual Ollama error structures
-             possible_texts = [v for v in response_data.values() if isinstance(v, str)]
-             if possible_texts:
-                 return possible_texts[0].strip().strip('`').strip() # Return the first string found
-             else:
-                 return json.dumps(response_data) # Return raw JSON if no obvious text
+    # default message; pass the prompt to ollama
+    messages = [{"role": "user", "content": prompt}]
+    # don't use the context unless that is specified
+    if use_context:
+        payload["context"] = CONTEXT # use the context (course data)
+        # 
+        if CONTEXT is None:
+             # TODO fix context setup prompt
+             messages.insert(0, {"role": "system", "content": f"You are an academic advisor. Here is context:\n{COURSE_CODE_MAPPING}"},)
+    payload["messages"] = messages
 
+    try:
+        response = requests.post(OLLAMA_API_URL, json=payload, timeout=120) # increase timeout if needed
+        response.raise_for_status() # raise an exception for bad status codes
+        response_data = response.json()
+
+        # store the context after the prompt to remember the course data
+        if "context" in response_data and CONTEXT is None:
+             CONTEXT = response_data["context"]
+
+        # extract the response message
+        if "message" in response_data and "content" in response_data["message"]:
+             return response_data["message"]["content"]
+        else:
+             return "Error: Could not parse chat response."
+        
     except requests.exceptions.RequestException as e:
-        print(f"Error calling Ollama: {e}")
+        print(f"Error calling Ollama chat: {e}")
         raise HTTPException(status_code=503, detail=f"Failed to communicate with Ollama service: {e}")
     except Exception as e:
-        print(f"Error processing Ollama response: {e}")
-        raise HTTPException(status_code=500, detail=f"Error processing response from Ollama: {e}")
-    
+        # Clean up context if call failed maybe? Depends on strategy.
+        print(f"Error processing Ollama chat response: {e}")
+        raise HTTPException(status_code=500, detail=f"Error processing response from Ollama chat: {e}")
+
 # fastapi deserializes json automatically
 @app.post("/init_student", response_model=StudentInfoResponse)
 # receive request.undergrad, request.major, request.courses_taken
 async def init_student(request: StudentInfoRequest):
     # parses a raw string of class listings into structured JSON.
     prompt = f"""You are an expert academic transcript parser. Analyze the following list of courses taken by a student. 
-    Extract the course codes (e.g., CSCI-C101). Format the output strictly as a JSON string containing a list of objects, 
+    Extract the course codes (e.g., CS101). Format the output strictly as a JSON string containing a list of objects, 
     where each object has a "code" key. If you cannot extract a code, you can omit the key or set it to null. Output ONLY
     the JSON string, without any introductory text, explanations, or markdown formatting.
     Input Text:
@@ -131,8 +130,7 @@ async def init_student(request: StudentInfoRequest):
                  parsed_json = parsed_json["courses"]
              else:
                 raise ValueError("Model did not return a JSON list as expected.")
-
-        
+             
         # TODO make sure you send properly created list of CourseInfo
         return StudentInfoResponse(courses=[])
 
@@ -143,9 +141,9 @@ async def init_student(request: StudentInfoRequest):
          print(f"Validation Error: {e}. Model output: {model_output}")
          raise HTTPException(status_code=500, detail=f"Model output validation failed: {e}")
 
-@app.post("/fetch_clases", response_model=CourseFilterResponse)
+@app.post("/fetch_classes", response_model=CourseFilterResponse)
 async def fetch_classes(request: CourseFilterRequest):
-    # TODO finish prompt
+    # TODO fix prompt
     # have request.criteria, request.interested_topics
     prompt = f"""You are an academic advisor assistant. Based on the student's interests provided below, identify which of 
     the listed courses they have already taken might be relevant to those interests. List ONLY the course codes (e.g., CS 101) 
@@ -167,66 +165,6 @@ async def fetch_classes(request: CourseFilterRequest):
     # TODO get valid courses from database based on model_output and/or request.criteria
     return CourseFilterResponse(llm_indentified_criteria=model_output, courses_to_display=[])
     
-user_contexts = {} # WARNING: Simple dict is not suitable for production!
-
-async def call_ollama_chat(user_id: str, messages: list):
-    """Sends messages to Ollama chat, managing context."""
-    payload = {
-        "model": MODEL_NAME,
-        "messages": messages,
-        "stream": False, # get full message at once
-        "options": {
-            "temperature": 0.1 # Lower temperature for more deterministic output (good for JSON)
-        }
-    }
-    # If context exists for this user, include it
-    if user_id in user_contexts:
-        payload["context"] = user_contexts[user_id]
-
-    try:
-        response = requests.post(OLLAMA_CHAT_URL, json=payload, timeout=120)
-        response.raise_for_status()
-        response_data = response.json()
-
-        # Store the new context for the next call for this user
-        if "context" in response_data:
-             user_contexts[user_id] = response_data["context"]
-
-        # Extract the response message
-        if "message" in response_data and "content" in response_data["message"]:
-             return response_data["message"]["content"]
-        else:
-             return "Error: Could not parse chat response."
-
-    except requests.exceptions.RequestException as e:
-        print(f"Error calling Ollama chat: {e}")
-        raise HTTPException(status_code=503, detail=f"Failed to communicate with Ollama service: {e}")
-    except Exception as e:
-        # Clean up context if call failed maybe? Depends on strategy.
-        print(f"Error processing Ollama chat response: {e}")
-        raise HTTPException(status_code=500, detail=f"Error processing response from Ollama chat: {e}")
-
-
-# --- Endpoint using chat ---
-@app.post("/chat") # Example using path parameter for user ID
-async def chat_endpoint(user_id: str, user_prompt: str = Body(...)):
-    # --- This is where you'd typically initialize the conversation ---
-    # --- or decide if it's a continuation ---
-
-    # Example: If it's the first message for this user, add system prompt
-    if user_id not in user_contexts:
-         initial_messages = [
-              {"role": "system", "content": f"You are an academic advisor. Here is context:\n{COURSE_CODE_MAPPING}"},
-              {"role": "user", "content": user_prompt}
-         ]
-         response_content = await call_ollama_chat(user_id, initial_messages)
-    else:
-        # This is a subsequent message
-        follow_up_messages = [{"role": "user", "content": user_prompt}]
-        response_content = await call_ollama_chat(user_id, follow_up_messages)
-
-    return {"response": response_content}
-
 # frontend js code for reference
 '''
 fetch("http://localhost:8000/init_student", {
