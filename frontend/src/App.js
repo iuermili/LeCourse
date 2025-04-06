@@ -249,102 +249,8 @@ const CourseList = ({ courseInfoList, selectedCourses, setSelectedCourses }) => 
   );
 };
 
-function createRequirementTable({fetchFilteredCourses, filters, setFilters, selectedCourses, courseInfoList, setCourseInfoList}) {
-
-
-    const requirements = ["Arts & Humanities", "World Cultures", "Natural Science", "Major"]
-
-  const gridStyle = {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(3, 1fr)',
-    gap: '10px',
-  };
-
-  const headerStyle = {
-    fontWeight: 'bold',
-    borderRight: '1px solid #ccc',
-    padding: '5px',
-  };
-
-  const cellStyle = {
-    padding: '5px',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-  };
-
-  const headers = ['Requirement', 'Taken/Required', 'Filter'];
-
-  const handleFilterChange = (requirement) => (event) => {
-    if (event.target.checked) {
-      setFilters([...filters, requirement]);
-      fetchFilteredCourses();
-    } else {
-      setFilters(filters.filter((filter) => filter !== requirement));
-      fetchFilteredCourses();
-    }
-  };
-
-  const requirementCounts = {};
-  selectedCourses.forEach((courseCode) => {
-    const course = courseInfoList.find((c) => c.code === courseCode);
-    if (course && course.requirements_satisfied) {
-      course.requirements_satisfied.forEach((req) => {
-        requirementCounts[req] = (requirementCounts[req] || 0) + course.credits;
-      });
-    }
-  });
-
-  let totalCredits = 0;
-  selectedCourses.forEach((courseCode) => {
-    const course = courseInfoList.find((c) => c.code === courseCode);
-    if (course) {
-      totalCredits += course.credits;
-    }
-  });
-
-  return (
-    <div style={gridStyle}>
-      {headers.map((headerText, index) => (
-        <div
-          key={`header-${index}`}
-          style={{
-            ...headerStyle,
-            borderRight: index < headers.length - 1 ? '1px solid #ccc' : 'none',
-          }}
-        >
-          {headerText}
-        </div>
-      ))}
-      {requirements.map((requirement, index) => {
-        let count = requirementCounts[requirement] || 0;
-        let displayCount = requirement === 'Required' ? '' : `${count}/6`;
-        if (requirement === 'Total') {
-          displayCount = `${totalCredits}/120`;
-        }
-
-        return (
-          <React.Fragment key={`row-${index}`}>
-            <div style={cellStyle}>{requirement}</div>
-            <div style={cellStyle}>{displayCount}</div>
-            <div style={cellStyle}>
-              {requirement !== 'Total' && (
-                <input
-                  type="checkbox"
-                  checked={filters.includes(requirement)}
-                  onChange={handleFilterChange(requirement)}
-                />
-              )}
-            </div>
-          </React.Fragment>
-        );
-      })}
-    </div>
-  );
-}
-
 function ChooseClasses({ fetchFilteredCourses, courseInfoList, setCourseInfoList, filters, setFilters, interests, setInterests }) {
-  // const [inputValue, setInputValue] = useState('');
+  const [inputValue, setInputValue] = useState('');
   const [selectedCourses, setSelectedCourses] = useState([]);
 
 
@@ -353,7 +259,7 @@ function ChooseClasses({ fetchFilteredCourses, courseInfoList, setCourseInfoList
   };
 
   const handleButtonClick = () => {
-    setFilters(inputValue);
+    setInterests(inputValue);
     fetchFilteredCourses();
     setInputValue("");
   };
@@ -372,10 +278,7 @@ function ChooseClasses({ fetchFilteredCourses, courseInfoList, setCourseInfoList
               ))}
             </ul>
           </div>
-          <div className="subColumns">
-            <h3>Requirements</h3>
-            {createRequirementTable({fetchFilteredCourses, requirementsData, filters, setFilters, selectedCourses, courseInfoList, setCourseInfoList})}
-          </div>
+    
         </div>
         <div className="columns">
           <h3>Suggested Courses</h3>
