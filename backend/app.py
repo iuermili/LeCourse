@@ -55,44 +55,10 @@ def init_student(request: StudentInfoRequest):
         # should return string class IDs separated by commas
         courses_taken = courses_taken_str.split(",")
 
-        print("AI RESPONSE:")
-        print(courses_taken)
-
         # TODO: verify each course
 
         con = sqlite3.connect("CourseScheduler.db")
         cur = con.cursor()
-
-        # (credit hours, GenEd)
-        courses_taken_to_send = []
-        for course_id in courses_taken:
-            cur.execute("""
-            SELECT CreditHours, GenEd
-            FROM Courses
-            WHERE CourseID = ?
-            """, (course_id,))
-            res = cur.fetchall()
-            print(res)
-            courses_taken_to_send.extend(res)
-    
-
-        placeholders = ','.join(['?'] * len(courses_taken))
-
-        cur.execute(f"""
-        SELECT SUM(CreditHours)
-        FROM Courses
-        WHERE Field = ? AND CourseID IN ({placeholders}) 
-        """, (request.major, *courses_taken))
-
-        taken = cur.fetchone()[0] if cur.fetchone()[0] else 0
-
-        cur.execute("""
-            SELECT SUM(CreditHours)
-            FROM Courses
-            WHERE Field = ?
-        """, (request.major,))
-
-        total_needed = cur.fetchone()[0] if cur.fetchone()[0] else 15
 
         fstring = ", ".join(['?'] * len(courses_taken))
 
@@ -110,13 +76,8 @@ def init_student(request: StudentInfoRequest):
             WHERE CourseID = ?
         """, course_ids_to_delete)
 
-    
-
-
         con.commit()
-
-
-    
+        
         cur.execute(
         "SELECT * FROM Courses")
         rows = cur.fetchall()
@@ -133,10 +94,7 @@ def init_student(request: StudentInfoRequest):
             ) 
             for row in rows
 ]
-
-        # TODO make sure you send properly created list of CourseInfo
-        print(courses_taken_to_send)
-        return StudentInfoResponse(init_response=courses_taken_to_send, major_credits=(taken,total_needed), all_courses_not_taken=all_courses_not_taken)
+        return StudentInfoResponse(all_courses_not_taken=all_courses_not_taken)
         
     except HTTPException as e:
         print(f"Caught HTTPException: {e.detail}")
@@ -157,22 +115,22 @@ def init_student(request: StudentInfoRequest):
 @app.post("/fetch_classes", response_model=CourseFilterResponse)
 def fetch_classes(request: CourseFilterRequest):
     print(request)
-    if request.prompt:
-        model_output = generate_content(fetch_classes_prompt + prompt).strip().split(", ")
-        courseinfo = filterData(request.criteria, model_output)
+    if request.prompt: 
+        model_output = generate_content(fetch_classes_prompt + request.prompt).strip().split(", ")
     else:
-        courseinfo = filterData(request.criteria, [])
-
+        model_output = ""
+    courseinfo = filterData(model_output)
     return CourseFilterResponse(filtered_courses=courseinfo)
+
     
 
-def filterData(attributes: list[str], courses: list[str]) -> list[CourseInfo]:
+def filterData(courses: list[str]) -> list[CourseInfo]:
 
     conn = sqlite3.connect('CourseScheduler.db')
     cursor = conn.cursor()
 
     # Fetch everything if no filter specified
-    if not attributes and not courses: 
+    if not courses: 
         cursor.execute(
         "SELECT * FROM Courses")
         rows = cursor.fetchall()
@@ -193,22 +151,10 @@ def filterData(attributes: list[str], courses: list[str]) -> list[CourseInfo]:
 
           
 
-    attribute_placeholders = ','.join('?' for _ in range(len(attributes)))
     courses_placeholders = ','.join('?' for _ in range(len(courses)))
 
-    if not attributes:
-        cursor.execute(
-            f"SELECT * FROM Courses WHERE CourseID IN ({courses_placeholders})", 
-            tuple(courses)  
-        )
-    elif not courses:
-        cursor.execute(
-            f"SELECT * FROM Courses WHERE Field IN ({attribute_placeholders})", 
-            tuple(attributes)  
-        )
-    else:
-        cursor.execute(
-        f"SELECT * FROM Courses WHERE GenEd IN ({attribute_placeholders}) AND CourseID IN ({courses_placeholders})", tuple(attributes + courses))
+    cursor.execute(
+    f"SELECT * FROM Courses WHERE CourseID IN ({courses_placeholders})", tuple(courses))
     
  
     rows = cursor.fetchall()

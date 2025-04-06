@@ -230,15 +230,10 @@ const CourseCard = ({ course, selectedCourses, setSelectedCourses }) => {
         <h3>{course.code}: {course.name}</h3>
         <p>{course.time}, {course.days}</p>
         <p>Credits: {course.credits}</p>
-        {course.field || course.genEdSatisfied && (
+        {course.field || course.gened && (
           <div>
             {course.field && <p><strong>Major Satisfied: </strong>{course.field}</p>}
-            {course.genEdSatisfied && <p><strong>GenEd Satisfied: </strong>{course.genEdSatisfied}</p>}
-          </div>
-        )}
-        {course.requirements_satisfied && course.requirements_satisfied.length > 0 && (
-          <div>
-            <p><strong>Requirements Satisfied: </strong>{course.requirements_satisfied.join(', ')}</p>
+            {course.gened && <p><strong>GenEd Satisfied: </strong>{course.gened}</p>}
           </div>
         )}
       </div>
@@ -262,7 +257,7 @@ const CourseList = ({ courseInfoList, selectedCourses, setSelectedCourses }) => 
   );
 };
 
-function ChooseClasses({ fetchFilteredCourses, courseInfoList, setCourseInfoList, filters, setFilters, interests, setInterests }) {
+function ChooseClasses({ fetchFilteredCourses, courseInfoList, setCourseInfoList}) {
   const [inputValue, setInputValue] = useState('');
   const [selectedCourses, setSelectedCourses] = useState([]);
 
@@ -271,8 +266,7 @@ function ChooseClasses({ fetchFilteredCourses, courseInfoList, setCourseInfoList
   };
 
   const handleButtonClick = () => {
-    setInterests(inputValue);
-    fetchFilteredCourses();
+    fetchFilteredCourses(inputValue);
     setInputValue("");
   };
 
@@ -526,7 +520,7 @@ function App() {
   const functions = [
     () => <SelectMajor onMajorChange={setSelectedMajor} />,
     () => <PastCoursesScreen setPastCourses={setPastCourses} major={major} onCoursesSubmit={setPastCourses} />, // Pass major and onCoursesSubmit
-    () => <ChooseClasses fetchFilteredCourses={fetchFilteredCourses} courseInfoList={courseInfoList} filters={filters} setFilters={setFilters} interests={interests} setInterests={setInterests}/>,
+    () => <ChooseClasses fetchFilteredCourses={fetchFilteredCourses} courseInfoList={courseInfoList} />,
   ];
 
   const sendDataToBackend = async () => {
@@ -563,10 +557,9 @@ function App() {
     }
   };
 
-  const fetchFilteredCourses = async () => {
+  const fetchFilteredCourses = async (interests) => {
     try {
       const requestData = {
-        criteria: filters,
         prompt: interests,
       };
       const fetchedCourses = await make_request(requestData, fetch_classes_endpoint_path);
