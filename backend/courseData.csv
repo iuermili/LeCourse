@@ -54,3 +54,13 @@ ENV102,Environmental Science II,Environmental Science,4,ENV101,9:00AM-9:50AM,MWF
 ENV201,Ecology and Conservation,Environmental Science,4,ENV102,10:00AM-10:50AM,MWF,Natural Science
 ENV301,Environmental Policy,Environmental Science,4,ENV201,11:00AM-11:50AM,MWF,Natural Science
 ENV401,Climate Change Studies,Environmental Science,4,ENV301,1:00PM-1:50PM,MWF,
+CS105,Introduction to Programming,Computer Science,3,,9:00AM-9:50AM,MWF,
+BIO105,Introduction to Biology,Biology,4,,10:00AM-10:50AM,MWF,Natural Science
+CHEM105,Introduction to Chemistry,Chemistry,4,,11:00AM-11:50AM,MWF,Natural Science
+PHYS105,Introduction to Physics,Physics,4,,12:00PM-12:50PM,MWF,Natural Science
+ENG105,Creative Writing I,English,3,,1:00PM-1:50PM,MWF,Arts & Humanities
+MATH105,Precalculus,Mathematics,4,,9:00AM-10:15AM,TuTh,
+HIST105,Introduction to World History,History,3,,10:30AM-11:45AM,TuTh,World Culture
+ART105,Introduction to Art,Art,3,,12:00PM-1:15PM,TuTh,Arts & Humanities
+PSYC105,Introduction to Psychology II,Psychology,3,,1:30PM-2:45PM,TuTh,
+ECON105,Introduction to Economics,Economics,3,,3:00PM-4:15PM,TuTh,

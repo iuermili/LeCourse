@@ -62,13 +62,14 @@ img {
 }
 
 input {
-  padding: 8px;
+  padding: 18px;
   width: 100%;
   margin-right: 10px;
   border-radius: 20px;
   border: 1px solid var(--border-color);
   outline: none;
   color: black;
+  font-size: 18px;
 }
 
 input[type="checkbox"] {
@@ -203,7 +204,7 @@ option:hover {
   text-align: center;
   background-color: var(--columns-background);
   border-radius: 4px;
-  justify-content: space-between;
+
   display: flex;
   flex-flow: column;
   gap: 10px;
