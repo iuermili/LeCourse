@@ -481,7 +481,7 @@ const generatePDF = () => {
           onChange={handleInputChange}
           className="filter-input large-input"
         />
-        <button onClick={handleButtonClick} style={{ padding: '10px', marginLeft: '10px' }}>
+        <button onClick={handleButtonClick} style={{ padding: '24px', marginLeft: '10px' }}>
           Enter
         </button>
       </div>
