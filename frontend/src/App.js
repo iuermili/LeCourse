@@ -123,11 +123,12 @@ function SelectMajor({ onMajorChange }) {
 
 const major_credits = [];
 
-function PastCoursesScreen({ major, onCoursesSubmit }) { // Add major as prop
+function PastCoursesScreen({ setPastCourses, major, onCoursesSubmit }) { // Add major as prop
   const [coursesInput, setCoursesInput] = useState('');
 
   const handleInputChange = (event) => {
     setCoursesInput(event.target.value.replace(/[\r\n\t]/g, ''));
+    setPastCourses(event.target.value)
   };
 
   return (
@@ -229,7 +230,11 @@ const CourseList = ({ courseInfoList, selectedCourses, setSelectedCourses }) => 
   );
 };
 
-function createRequirementTable({fetchFilteredCourses, requirements, filters, setFilters, selectedCourses, courseInfoList, setCourseInfoList}) {
+function createRequirementTable({fetchFilteredCourses, filters, setFilters, selectedCourses, courseInfoList, setCourseInfoList}) {
+
+
+    const requirements = ["Arts & Humanities", "World Cultures", "Natural Science", "Major"]
+
   const gridStyle = {
     display: 'grid',
     gridTemplateColumns: 'repeat(3, 1fr)',
@@ -322,20 +327,22 @@ function createRequirementTable({fetchFilteredCourses, requirements, filters, se
 function ChooseClasses({ fetchFilteredCourses, courseInfoList, setCourseInfoList, filters, setFilters, interests, setInterests }) {
   // const [inputValue, setInputValue] = useState('');
   const [selectedCourses, setSelectedCourses] = useState([]);
+  const [inputValue, setInputValue] = useState('');
 
 
   const handleInputChange = (e) => {
-    setInterests(e.target.value);
+    setInputValue(e.target.value);
   };
 
   const handleButtonClick = () => {
+    setFilters(inputValue);
     fetchFilteredCourses();
-    setInterests("")
+    setInputValue("");
   };
 
 
 
-  const requirementsData = ['A&H', 'Natural Science', 'World Culture', 'Required', 'Total'];
+  const requirementsData = ['Arts & Humanities', 'Natural Science', 'World Culture', 'Required', 'Total'];
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
@@ -366,7 +373,7 @@ function ChooseClasses({ fetchFilteredCourses, courseInfoList, setCourseInfoList
       <div className="input">
         <input
           type="text"
-          value={interests}
+          value={inputValue}
           onChange={handleInputChange}
         />
         <button onClick={handleButtonClick} style={{ padding: '10px', marginLeft: '10px' }}>
@@ -383,7 +390,7 @@ function App() {
   const [startAnimations, setStartAnimation] = useState(true);
   const [dunkComplete, setDunkComplete] = useState(false); // New state
   const [showTitle, setShowTitle] = useState(false); // New state
-  const [pastCourses, setPastCourses] = useState([]);
+  const [pastCourses, setPastCourses] = useState('');
   const [major, setSelectedMajor] = useState('');
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isSendingData, setIsSendingData] = useState(false);
@@ -402,19 +409,19 @@ function App() {
   // Array of functions to be shown
   const functions = [
     () => <SelectMajor onMajorChange={setSelectedMajor} />,
-    () => <PastCoursesScreen major={major} onCoursesSubmit={setPastCourses} />, // Pass major and onCoursesSubmit
+    () => <PastCoursesScreen setPastCourses={setPastCourses} major={major} onCoursesSubmit={setPastCourses} />, // Pass major and onCoursesSubmit
     () => <ChooseClasses fetchFilteredCourses={fetchFilteredCourses} courseInfoList={courseInfoList} filters={filters} setFilters={setFilters} interests={interests} setInterests={setInterests}/>,
   ];
 
   const sendDataToBackend = async () => {
     const userData = {
       major: major,
-      courses_taken: pastCourses.join(', '), // Join courses into a comma-separated string
+      courses_taken: pastCourses, // Join courses into a comma-separated string
     };
 
     try {
       const responseData = await make_request(userData, init_student_endpoint_path);
-      console.log('Backend response:', responseData);
+      // TODO: CREDITS CALCULATOR
       setCourseInfoList(responseData.all_courses_not_taken)
       // Handle the response data (e.g., store it in state)
     } catch (error) {
@@ -444,7 +451,7 @@ function App() {
     try {
       const requestData = {
         criteria: filters,
-        interested_topics: interests,
+        prompt: interests,
       };
       const fetchedCourses = await make_request(requestData, fetch_classes_endpoint_path);
       setCourseInfoList(fetchedCourses.filtered_courses);
@@ -453,11 +460,6 @@ function App() {
     }
   };
 
-  useEffect(() => {
-    if (filters.length > 0 || interests) {
-      fetchFilteredCourses();
-    }
-  }, [filters, interests]);
 
   return (
     <div id='root'>
