@@ -262,7 +262,9 @@ const CourseList = ({ courseInfoList, selectedCourses, setSelectedCourses }) => 
 };
 
 function createRequirementTable({fetchFilteredCourses, filters, setFilters, selectedCourses, courseInfoList, setCourseInfoList}) {
-  const requirements = ["Arts & Humanities", "World Cultures", "Natural Science", "Major"]
+
+
+    const requirements = ["Arts & Humanities", "World Cultures", "Natural Science", "Major"]
 
   const gridStyle = {
     display: 'grid',
@@ -362,7 +364,7 @@ function ChooseClasses({ fetchFilteredCourses, courseInfoList, setCourseInfoList
   };
 
   const handleButtonClick = () => {
-    setFilters(inputValue);
+    setInterests(inputValue);
     fetchFilteredCourses();
     setInputValue("");
   };
@@ -380,11 +382,11 @@ function ChooseClasses({ fetchFilteredCourses, courseInfoList, setCourseInfoList
                 <li key={index} className="course-item">{course}</li>
               ))}
             </ul>
-          {/* </div>
+          </div>
           <div className="subColumns">
             <h3>Requirements</h3>
             {createRequirementTable({fetchFilteredCourses, requirementsData, filters, setFilters, selectedCourses, courseInfoList, setCourseInfoList})}
-          </div> */}
+          </div>
         </div>
         <div className="columns">
           <h3>Suggested Courses</h3>
