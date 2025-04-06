@@ -229,7 +229,7 @@ const CourseCard = ({ course, selectedCourses, setSelectedCourses }) => {
         <h3>{course.code}: {course.name}</h3>
         <p>{course.time}, {course.days}</p>
         <p>Credits: {course.credits}</p>
-        {course.field || course.genEdSatisfied && (
+        {course.field || course.gened && (
           <div>
             {course.field && <p><strong>Major Satisfied: </strong>{course.field}</p>}
             {course.gened && <p><strong>GenEd Satisfied: </strong>{course.gened}</p>}
