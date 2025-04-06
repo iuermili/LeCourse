@@ -6,18 +6,19 @@ import { make_request, init_student_endpoint_path, fetch_classes_endpoint_path }
 
 // Starting Animation Functions (3 Parts)
 // Part 1.
-function LeEntrance({ setShowIntro }) {
+function LeEntrance({ setDunk }) {
   return (
     <motion.div
       initial={{ x: -1200, y: 0, opacity: 0 }}
       animate={{ x: 100, opacity: 1 }}
       transition={{ duration: 6 }}
       style={{ position: "relative", overflow: "visible", display: "flex", flexDirection: "row", alignItems: "flex-end", gap: "100px"}}
-      onAnimationComplete={() => setShowIntro(true)}
+      onAnimationComplete={() => setDunk(true)}
     >
       
       <h1>Introducing LeCourse</h1>
-      <img src="/lebron.png" alt="LeBron" style={{ height: "400px" }} />
+      <img src="/lebron_dunk.png" alt="LeBron" style={{ height: "400px" }} />
+      {!setDunk && (<img src="/books.png" alt="Books" style={{ position: "absolute", top: "50px", left: "0px",height: "50px"}}/>)}
     </motion.div>
   );
 }
@@ -32,6 +33,23 @@ function LeShoppingCart() {
       animate={{ x: 100, opacity: 1 }}
       transition={{ duration: 2 }}
       style={{ height: "100px" }}
+    />
+  );
+}
+
+// Part 3.
+function LeDunk(setShowIntro) {
+  return (
+    <motion.img src="/books.png" alt="Flying Books"
+      initial={{ opacity: 1 }}
+      animate={{
+        x: [100, 300],
+        y: [-50, -50],
+        opacity: [1, 1]
+      }}
+      transition={{ duration: 2 }}
+      style={{ position: "absolute", top: 80, left: 60, height: "60px", zIndex: 1 }}
+      onAnimationComplete={() => setShowIntro(true)}
     />
   );
 }
@@ -199,9 +217,10 @@ const CourseCard = ({ course, selectedCourses, setSelectedCourses }) => {
         <h3>{course.code}: {course.name}</h3>
         <p>{course.time}, {course.days}</p>
         <p>Credits: {course.credits}</p>
-        {course.field && (
+        {course.field || course.genEdSatisfied && (
           <div>
-            <p><strong>Major Satisfied: </strong>{course.field}</p>
+            {course.field && <p><strong>Major Satisfied: </strong>{course.field}</p>}
+            {course.genEdSatisfied && <p><strong>Gen-Ed Satisfied: </strong>{course.genEdSatisfied}</p>}
           </div>
         )}
         {course.requirements_satisfied && course.requirements_satisfied.length > 0 && (
@@ -327,7 +346,6 @@ function createRequirementTable({fetchFilteredCourses, filters, setFilters, sele
 function ChooseClasses({ fetchFilteredCourses, courseInfoList, setCourseInfoList, filters, setFilters, interests, setInterests }) {
   // const [inputValue, setInputValue] = useState('');
   const [selectedCourses, setSelectedCourses] = useState([]);
-  const [inputValue, setInputValue] = useState('');
 
 
   const handleInputChange = (e) => {
@@ -339,8 +357,6 @@ function ChooseClasses({ fetchFilteredCourses, courseInfoList, setCourseInfoList
     fetchFilteredCourses();
     setInputValue("");
   };
-
-
 
   const requirementsData = ['Arts & Humanities', 'Natural Science', 'World Culture', 'Required', 'Total'];
 
@@ -389,6 +405,8 @@ function App() {
   const [showIntro, setShowIntro] = useState(false);
   const [startAnimations, setStartAnimation] = useState(true);
   const [dunkComplete, setDunkComplete] = useState(false); // New state
+  const [dunk, setDunk] = useState(false);
+
   const [showTitle, setShowTitle] = useState(false); // New state
   const [pastCourses, setPastCourses] = useState('');
   const [major, setSelectedMajor] = useState('');
@@ -466,8 +484,9 @@ function App() {
       {/* Starting Animations */}
       {startAnimations && (
         <>
-          {!showIntro && <LeEntrance setShowIntro={setShowIntro}/>}
+          {!showIntro && <LeEntrance setDunk={setDunk}/>}
           {!showIntro && <LeShoppingCart />}
+          {!showIntro && <LeDunk setShowIntro={setShowIntro}/>}
           {showIntro && <LeCourseIntro setStartAnimation={setStartAnimation} />}
         </>
       )}
