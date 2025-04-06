@@ -74,17 +74,17 @@ function LeCourseIntro({ setStartAnimation }) {
       {/* Subtitles + Play/Pause Button */}
       <div style={{ marginTop: "1rem", display: "flex", alignItems: "center", justifyContent: "center", gap: "1rem", width: "600px"}}>
         
-        <button onClick={handlePlayPause} style={{borderRadius: "50%", width: "100px", height: "50px", padding: "0px"}}>
+        <button onClick={handlePlayPause} style={{borderRadius: "50%", width: "50px", height: "50px", padding: "0px"}}>
           <i data-feather="volume-2"></i>
         </button>
 
-        <p className="subtitles">I am LeCourse, and I'll be helping you schedule your classes. I've had coaches, mentors, and teammates. Now you got me. Let's do this.</p>
+        <p className="subtitles">This is LeCourse. I'm here to help you schedule your classes. Let's do this!</p>
 
         <div className="next">
           <button onClick={toggleStartAnimation}>NEXT</button>
         </div>
 
-        <audio ref={audioRef} src="/audio.mp3" />
+        <audio ref={audioRef} src="/LeCourse Introduction.mp3" />
       </div>
 
     </motion.div>
