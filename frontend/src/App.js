@@ -1,24 +1,53 @@
 import React, { useState, useRef, useEffect } from "react"; // Fundamental Library for React
-import { motion } from "framer-motion";                     // Animation Library
+import { motion, useAnimation } from "framer-motion";                     // Animation Library
 import feather from "feather-icons";                        // Library for Open-Source SVG Icons
 import './App.css';                                         // File that simplifies CSS
 import { make_request, init_student_endpoint_path, fetch_classes_endpoint_path } from './requestMaker.js';
 
 // Starting Animation Functions (3 Parts)
 // Part 1.
-function LeEntrance({ setDunk }) {
+function LeEntrance({ setShowIntro }) {
+  const [dunked, setDunked] = useState(false);
+  const bookControls = useAnimation();
+
+  useEffect(() => {
+    if (dunked) {
+      bookControls.start({
+        x: [0, 25, 50, 75, 100, 125, 150, 175, 200, 225, 250, 275, 300, 325, 325, 325],
+        y: [0, -20, -40, -60, -80, -100, -120, -140, -160, -140, -120, -100, -80, -60, -60, -60],
+        opacity: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+        transition: { duration: 1.5, ease: "easeInOut"},
+      });
+    }
+  }, [dunked, bookControls]);
+  
   return (
     <motion.div
       initial={{ x: -1200, y: 0, opacity: 0 }}
       animate={{ x: 100, opacity: 1 }}
-      transition={{ duration: 6 }}
+      transition={{ duration: 4.5 }}
       style={{ position: "relative", overflow: "visible", display: "flex", flexDirection: "row", alignItems: "flex-end", gap: "100px"}}
-      onAnimationComplete={() => setDunk(true)}
+      onAnimationComplete={() => setDunked(true)}
     >
       
-      <h1>Introducing LeCourse</h1>
+      <div style={{display: "flex", flexDirection: "column"}}>
+        <h1>Introducing LeCourse</h1>
+        <p>An AI Course Scheduling Assistant</p>
+      </div>
+      <motion.img
+        src="/books.png"
+        alt="Books"
+        initial={{ x: 0, y: 0, rotate: 0, opacity: 1 }}
+        animate={bookControls}
+        onAnimationComplete={() => setShowIntro(true)}
+        style={{
+          position: "absolute",
+          top: "50px",
+          right: "275px",
+          height: "50px",
+        }}
+      />
       <img src="/lebron_dunk.png" alt="LeBron" style={{ height: "400px" }} />
-      {!setDunk && (<img src="/books.png" alt="Books" style={{ position: "absolute", top: "50px", left: "0px",height: "50px"}}/>)}
     </motion.div>
   );
 }
@@ -30,26 +59,9 @@ function LeShoppingCart() {
       src="/cart.png"
       alt="Shopping cart"
       initial={{ x: 600, y: -150, opacity: 0 }}
-      animate={{ x: 100, opacity: 1 }}
+      animate={{ x: 75, opacity: 1 }}
       transition={{ duration: 2 }}
       style={{ height: "100px" }}
-    />
-  );
-}
-
-// Part 3.
-function LeDunk(setShowIntro) {
-  return (
-    <motion.img src="/books.png" alt="Flying Books"
-      initial={{ opacity: 1 }}
-      animate={{
-        x: [100, 300],
-        y: [-50, -50],
-        opacity: [1, 1]
-      }}
-      transition={{ duration: 2 }}
-      style={{ position: "absolute", top: 80, left: 60, height: "60px", zIndex: 1 }}
-      onAnimationComplete={() => setShowIntro(true)}
     />
   );
 }
@@ -128,7 +140,7 @@ function SelectMajor({ onMajorChange }) {
         value={selectedMajor}
         onChange={handleMajorChange}
       >
-        <option value="">Select your major</option>
+        <option value="">Select one...</option>
         {majors.map((major) => (
           <option key={major} value={major}>
             {major}
@@ -220,7 +232,7 @@ const CourseCard = ({ course, selectedCourses, setSelectedCourses }) => {
         {course.field || course.genEdSatisfied && (
           <div>
             {course.field && <p><strong>Major Satisfied: </strong>{course.field}</p>}
-            {course.genEdSatisfied && <p><strong>Gen-Ed Satisfied: </strong>{course.genEdSatisfied}</p>}
+            {course.genEdSatisfied && <p><strong>GenEd Satisfied: </strong>{course.genEdSatisfied}</p>}
           </div>
         )}
         {course.requirements_satisfied && course.requirements_satisfied.length > 0 && (
@@ -250,9 +262,7 @@ const CourseList = ({ courseInfoList, selectedCourses, setSelectedCourses }) => 
 };
 
 function createRequirementTable({fetchFilteredCourses, filters, setFilters, selectedCourses, courseInfoList, setCourseInfoList}) {
-
-
-    const requirements = ["Arts & Humanities", "World Cultures", "Natural Science", "Major"]
+  const requirements = ["Arts & Humanities", "World Cultures", "Natural Science", "Major"]
 
   const gridStyle = {
     display: 'grid',
@@ -344,9 +354,8 @@ function createRequirementTable({fetchFilteredCourses, filters, setFilters, sele
 }
 
 function ChooseClasses({ fetchFilteredCourses, courseInfoList, setCourseInfoList, filters, setFilters, interests, setInterests }) {
-  // const [inputValue, setInputValue] = useState('');
+  const [inputValue, setInputValue] = useState('');
   const [selectedCourses, setSelectedCourses] = useState([]);
-
 
   const handleInputChange = (e) => {
     setInputValue(e.target.value);
@@ -363,19 +372,19 @@ function ChooseClasses({ fetchFilteredCourses, courseInfoList, setCourseInfoList
   return (
     <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
       <div className="container">
-        <div className="columns" style={{ padding: "0px", background: "none" }}>
-          <div className="subColumns">
+        <div className="columns">
+          {/* <div className="subColumns"> */}
             <h3>Selected Courses</h3>
             <ul className="course-list">
               {selectedCourses.map((course, index) => (
                 <li key={index} className="course-item">{course}</li>
               ))}
             </ul>
-          </div>
+          {/* </div>
           <div className="subColumns">
             <h3>Requirements</h3>
             {createRequirementTable({fetchFilteredCourses, requirementsData, filters, setFilters, selectedCourses, courseInfoList, setCourseInfoList})}
-          </div>
+          </div> */}
         </div>
         <div className="columns">
           <h3>Suggested Courses</h3>
@@ -390,12 +399,15 @@ function ChooseClasses({ fetchFilteredCourses, courseInfoList, setCourseInfoList
         <input
           type="text"
           value={inputValue}
+          placeholder = "Enter your interests"
           onChange={handleInputChange}
+          className="filter-input large-input"
         />
         <button onClick={handleButtonClick} style={{ padding: '10px', marginLeft: '10px' }}>
           Enter
         </button>
       </div>
+      
     </div>
   );
 }
@@ -405,7 +417,6 @@ function App() {
   const [showIntro, setShowIntro] = useState(false);
   const [startAnimations, setStartAnimation] = useState(true);
   const [dunkComplete, setDunkComplete] = useState(false); // New state
-  const [dunk, setDunk] = useState(false);
 
   const [showTitle, setShowTitle] = useState(false); // New state
   const [pastCourses, setPastCourses] = useState('');
@@ -478,15 +489,13 @@ function App() {
     }
   };
 
-
   return (
     <div id='root'>
       {/* Starting Animations */}
       {startAnimations && (
         <>
-          {!showIntro && <LeEntrance setDunk={setDunk}/>}
+          {!showIntro && <LeEntrance setShowIntro={setShowIntro}/>}
           {!showIntro && <LeShoppingCart />}
-          {!showIntro && <LeDunk setShowIntro={setShowIntro}/>}
           {showIntro && <LeCourseIntro setStartAnimation={setStartAnimation} />}
         </>
       )}
