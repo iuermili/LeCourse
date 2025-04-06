@@ -94,9 +94,6 @@ def init_student(request: StudentInfoRequest):
             ) 
             for row in rows
 ]
-
-        # TODO make sure you send properly created list of CourseInfo
-        print(courses_taken_to_send)
         return StudentInfoResponse(all_courses_not_taken=all_courses_not_taken)
         
     except HTTPException as e:
@@ -119,11 +116,11 @@ def init_student(request: StudentInfoRequest):
 def fetch_classes(request: CourseFilterRequest):
     print(request)
     if request.prompt: 
-        model_output = generate_content(fetch_classes_prompt + prompt).strip().split(", ")
+        model_output = generate_content(fetch_classes_prompt + request.prompt).strip().split(", ")
     else:
         model_output = ""
-        courseinfo = filterData(model_output)
-        return CourseFilterResponse(filtered_courses=courseinfo)
+    courseinfo = filterData(model_output)
+    return CourseFilterResponse(filtered_courses=courseinfo)
 
     
 
