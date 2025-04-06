@@ -21,9 +21,13 @@ Before running this project, ensure you have the following installed:
 - Node.js (v14 or higher)
 - npm (v6 or higher)
 
-```npm install```
+```
+npm install
+```
 > Run this command to install all required packages
-```npm start```
+```
+npm start
+```
 > Run this command to compile the program
 
 ### Backend Setup
