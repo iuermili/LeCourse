@@ -10,11 +10,11 @@ We built a web application with a React frontend and a Python FastAPI backend ut
 
 ## User Guide
 
-LeBron James will guide you through your course selection in this AI-powered course selection tool. Simply select your major and type in what classes you have already taken. At this point, classes unavailable due to insufficient prerequisites, and the classes that you have already taken will be filtered out. Then, you will be taken to the dashboard in which you can tell AI Lebron what classes you might be interested in. AI Lebron will narrow down exactly the courses you want and then suggest them to you. Finally, you have the option to hold onto the suggested courses.
+LeBron James will guide you through your course selection in this AI-powered course selection tool. Simply select your major and type in what classes you have already taken. At this point, the classes you have taken and classes with unsatisfied prerequisites will be filtered out from our database, meaning that they will not be suggested to you by AI Lebron. Then, you will be taken to the dashboard in which you can tell AI Lebron what classes you might be interested in. Based on your interests, AI Lebron will suggest courses to you. If any of AI Lebron's recommendations resonate with you, you have the ability to hold on to them throughout all your interactions with AI Lebron. 
 
 ## Usage
 
-You will need to run both the frontend and backend to try LeCourse. This can be done on the same machine, so feel free to try LeCourse out!
+You will need to run both the frontend and backend for the full LeCourse experience. This can be done on the same machine, so feel free to try LeCourse out!
 
 ### Frontend Setup
 Before running this project, ensure you have the following installed:
