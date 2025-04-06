@@ -9,6 +9,7 @@ import sqlite3
 import google.generativeai as genai
 import os
 from dotenv import load_dotenv
+from fastapi.middleware.cors import CORSMiddleware
 
 load_dotenv()
 API_KEY = os.getenv("API_KEY")
@@ -18,6 +19,14 @@ model = genai.GenerativeModel(GEMINI_MODEL)
 
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],            # or ["*"] to allow all
+    allow_credentials=True,
+    allow_methods=["*"],              # allow all HTTP methods
+    allow_headers=["*"],              # allow all headers
+)
 
 
 # sends prompt to gemini
@@ -55,7 +64,6 @@ def init_student(request: StudentInfoRequest):
         # (credit hours, GenEd)
         courses_taken_to_send = []
         for course_id in courses_taken:
-            print(f"Querying for CourseID: {course_id}")
             cur.execute("""
             SELECT CreditHours, GenEd
             FROM Courses
@@ -146,11 +154,12 @@ def init_student(request: StudentInfoRequest):
 
 @app.post("/fetch_classes", response_model=CourseFilterResponse)
 def fetch_classes(request: CourseFilterRequest):
-    model_output = generate_content(fetch_classes_prompt + request.prompt).strip().split(", ")
-    print(model_output)
-     
-    courseinfo = filterData(request.criteria, model_output)
-    print(request.criteria)
+    print(request)
+    if request.prompt:
+        model_output = generate_content(fetch_classes_prompt + prompt).strip().split(", ")
+        courseinfo = filterData(request.criteria, model_output)
+    else:
+        courseinfo = filterData(request.criteria, [])
 
     return CourseFilterResponse(filtered_courses=courseinfo)
     

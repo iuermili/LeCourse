@@ -17,9 +17,8 @@ function LeEntrance({ setDunk }) {
     >
       
       <h1>Introducing LeCourse</h1>
-      <img src="/lebron.png" alt="LeBron" style={{ height: "400px" }} />
+      <img src="/lebron_dunk.png" alt="LeBron" style={{ height: "400px" }} />
       {!setDunk && (<img src="/books.png" alt="Books" style={{ position: "absolute", top: "50px", left: "0px",height: "50px"}}/>)}
-
     </motion.div>
   );
 }
@@ -44,9 +43,9 @@ function LeDunk(setShowIntro) {
     <motion.img src="/books.png" alt="Flying Books"
       initial={{ opacity: 1 }}
       animate={{
-        x: [0, 300, 600, 800, 800],
-        y: [0, -100, -120, 100, 100],
-        opacity: [1, 1, 1, 1, 1, 0]
+        x: [100, 300],
+        y: [-50, -50],
+        opacity: [1, 1]
       }}
       transition={{ duration: 2 }}
       style={{ position: "absolute", top: 80, left: 60, height: "60px", zIndex: 1 }}
@@ -142,11 +141,12 @@ function SelectMajor({ onMajorChange }) {
 
 const major_credits = [];
 
-function PastCoursesScreen({ major, onCoursesSubmit }) { // Add major as prop
+function PastCoursesScreen({ setPastCourses, major, onCoursesSubmit }) { // Add major as prop
   const [coursesInput, setCoursesInput] = useState('');
 
   const handleInputChange = (event) => {
     setCoursesInput(event.target.value.replace(/[\r\n\t]/g, ''));
+    setPastCourses(event.target.value)
   };
 
   return (
@@ -249,7 +249,11 @@ const CourseList = ({ courseInfoList, selectedCourses, setSelectedCourses }) => 
   );
 };
 
-function createRequirementTable({fetchFilteredCourses, requirements, filters, setFilters, selectedCourses, courseInfoList, setCourseInfoList}) {
+function createRequirementTable({fetchFilteredCourses, filters, setFilters, selectedCourses, courseInfoList, setCourseInfoList}) {
+
+
+    const requirements = ["Arts & Humanities", "World Cultures", "Natural Science", "Major"]
+
   const gridStyle = {
     display: 'grid',
     gridTemplateColumns: 'repeat(3, 1fr)',
@@ -343,16 +347,18 @@ function ChooseClasses({ fetchFilteredCourses, courseInfoList, setCourseInfoList
   // const [inputValue, setInputValue] = useState('');
   const [selectedCourses, setSelectedCourses] = useState([]);
 
+
   const handleInputChange = (e) => {
-    setInterests(e.target.value);
+    setInputValue(e.target.value);
   };
 
   const handleButtonClick = () => {
+    setFilters(inputValue);
     fetchFilteredCourses();
-    setInterests("")
+    setInputValue("");
   };
 
-  const requirementsData = ['A&H', 'Natural Science', 'World Culture', 'Required', 'Total'];
+  const requirementsData = ['Arts & Humanities', 'Natural Science', 'World Culture', 'Required', 'Total'];
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
@@ -383,7 +389,7 @@ function ChooseClasses({ fetchFilteredCourses, courseInfoList, setCourseInfoList
       <div className="input">
         <input
           type="text"
-          value={interests}
+          value={inputValue}
           onChange={handleInputChange}
         />
         <button onClick={handleButtonClick} style={{ padding: '10px', marginLeft: '10px' }}>
@@ -402,7 +408,7 @@ function App() {
   const [dunk, setDunk] = useState(false);
 
   const [showTitle, setShowTitle] = useState(false); // New state
-  const [pastCourses, setPastCourses] = useState([]);
+  const [pastCourses, setPastCourses] = useState('');
   const [major, setSelectedMajor] = useState('');
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isSendingData, setIsSendingData] = useState(false);
@@ -421,19 +427,19 @@ function App() {
   // Array of functions to be shown
   const functions = [
     () => <SelectMajor onMajorChange={setSelectedMajor} />,
-    () => <PastCoursesScreen major={major} onCoursesSubmit={setPastCourses} />, // Pass major and onCoursesSubmit
+    () => <PastCoursesScreen setPastCourses={setPastCourses} major={major} onCoursesSubmit={setPastCourses} />, // Pass major and onCoursesSubmit
     () => <ChooseClasses fetchFilteredCourses={fetchFilteredCourses} courseInfoList={courseInfoList} filters={filters} setFilters={setFilters} interests={interests} setInterests={setInterests}/>,
   ];
 
   const sendDataToBackend = async () => {
     const userData = {
       major: major,
-      courses_taken: pastCourses.join(', '), // Join courses into a comma-separated string
+      courses_taken: pastCourses, // Join courses into a comma-separated string
     };
 
     try {
       const responseData = await make_request(userData, init_student_endpoint_path);
-      console.log('Backend response:', responseData);
+      // TODO: CREDITS CALCULATOR
       setCourseInfoList(responseData.all_courses_not_taken)
       // Handle the response data (e.g., store it in state)
     } catch (error) {
@@ -463,7 +469,7 @@ function App() {
     try {
       const requestData = {
         criteria: filters,
-        interested_topics: interests,
+        prompt: interests,
       };
       const fetchedCourses = await make_request(requestData, fetch_classes_endpoint_path);
       setCourseInfoList(fetchedCourses.filtered_courses);
@@ -472,11 +478,6 @@ function App() {
     }
   };
 
-  useEffect(() => {
-    if (filters.length > 0 || interests) {
-      fetchFilteredCourses();
-    }
-  }, [filters, interests]);
 
   return (
     <div id='root'>
