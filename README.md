@@ -14,6 +14,24 @@ LeBron James will guide you through your course selection in this AI-powered cou
 
 ## Usage
 
+### Frontend Setup
+
+### Backend Setup
+
+```
+API_KEY=GRAB_THIS_FROM_GOOGLE_AI_STUDIO
+GEMINI_MODEL=ALSO_GRAB_THIS_FROM_GOOGLE_AI_STUDIO
+```
+> In the `/backend` directory, create a `.env` file with the following format. As specified in `/backend/.gitignore`, this file will be ignored by git.
+```
+pip install uvicorn pydantic fastapi typing sqlite3 dotenv google.generativeai
+```
+> Run this command to install all the libraries for the Python scripts. 
+```
+uvicorn app:app --reload
+```
+> Run this command to run the backend, the default is be on `http://localhost:8000`.
+
 ## Our process
 
 Initially, we wanted to build a application that could work with Indiana University's real course schedule. We quickly learned that publicly available web pages with IU's courses are not very data friendly and would be a pain to clean up. We decided to generate some dummy course data for Hackathon purposes to allow us to spend our limited time on the app's functionality. 
