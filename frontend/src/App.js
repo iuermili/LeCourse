@@ -18,11 +18,8 @@ function LeEntrance({ setDunk }) {
       
       <h1>Introducing LeCourse</h1>
       <img src="/lebron.png" alt="LeBron" style={{ height: "400px" }} />
-      {!moveBooks && (<img src="/books.png" alt="Books" style={{ position: "absolute", top: "50px", left: "0px",height: "50px"
-          }}
-        />
-      )}
-    </motion.div>
+      {!setDunk && (<img src="/books.png" alt="Books" style={{ position: "absolute", top: "50px", left: "0px",height: "50px"}}/>)}
+
     </motion.div>
   );
 }
@@ -43,7 +40,19 @@ function LeShoppingCart() {
 
 // Part 3.
 function LeDunk(setShowIntro) {
-  onAnimationComplete={() => setShowIntro(true)}
+  return (
+    <motion.img src="/books.png" alt="Flying Books"
+      initial={{ opacity: 1 }}
+      animate={{
+        x: [0, 300, 600, 800, 800],
+        y: [0, -100, -120, 100, 100],
+        opacity: [1, 1, 1, 1, 1, 0]
+      }}
+      transition={{ duration: 2 }}
+      style={{ position: "absolute", top: 80, left: 60, height: "60px", zIndex: 1 }}
+      onAnimationComplete={() => setShowIntro(true)}
+    />
+  );
 }
 
 // Introduction Screen Function
