@@ -75,8 +75,28 @@ async def init_student(request: StudentInfoRequest):
         WHERE CourseID = ?
         """, courses_taken)
 
+
+
         courses_taken_to_send = cur.fetchall()
         # (credit hours, GenEd)
+
+        placeholders = ','.join(['?'] * len(courses_taken))
+
+        cur.execute(f"""
+        SELECT SUM(CreditHours)
+        FROM Courses
+        WHERE Field = ? AND CourseID IN ({placeholders}) 
+        """, (request.major, *courses_taken))
+
+        taken = cur.fetchone()[0]
+
+        cur.execute(f"""
+        SELECT SUM(CreditHours)
+        FROM Courses
+        WHERE Field = {request.major}
+        """)
+
+        total_needed = cur.fetchone()[0]
 
         
         cur.executemany("""
@@ -86,14 +106,16 @@ async def init_student(request: StudentInfoRequest):
 
         con.commit()
 
+
         # TODO Send courses_taken_to_send AND total major credits taken/need AND available courses in one go
-        cursor.execute(
+        cur.execute(
         "SELECT * FROM Courses", fields)
-        rows = cursor.fetchall()
-        result = [CourseInfo(*row) for row in rows]
+        rows = cur.fetchall()
+        all_courses_not_taken = [CourseInfo(*row) for row in rows]
 
         # TODO make sure you send properly created list of CourseInfo
-        return StudentInfoResponse(init_response=courses_taken_to_send)
+        return StudentInfoResponse(init_response=courses_taken_to_send, major_credits=(taken,total_needed), all_courses_not_taken=all_courses_not_taken)
+        
     except HTTPException as e:
         print(f"Caught HTTPException: {e.detail}")
         raise e
@@ -129,7 +151,7 @@ def filterData(fields: list[str]) -> list[CourseInfo]:
     conn = sqlite3.connect('CourseScheduler.db')
     cursor = conn.cursor()
 
-    placeholders = ','.join('?' for _ in len(fields))
+    placeholders = ','.join('?' for _ in range(len(fields)))
 
     cursor.execute(
         f"SELECT * FROM Courses WHERE Field IN ({placeholders})", fields)
