@@ -1,6 +1,3 @@
-# LeCourse
-An AI-powered Course Selector centered around a "LeBron James" Chatbot that helps students seamlessly choose the most suitable courses for an upcoming semester.
-
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
