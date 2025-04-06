@@ -14,17 +14,11 @@ CREATE TABLE IF NOT EXISTS Courses (
     SemesterOffered TEXT, 
     Time TEXT, 
     Days TEXT, 
-    GenEd TEXT
+    GenEd TEXT,
+    RequiredFor
 )
 """)
 
-cur.execute("""
-CREATE TABLE IF NOT EXISTS Requirements (
-    CourseID TEXT, 
-    Major TEXT,
-    FOREIGN KEY (CourseID) REFERENCES Courses (CourseID)
-)
-""")
 courses_data = []
 with open('courseData.csv', newline='') as csvfile:
     courseReader = csv.DictReader(csvfile)
@@ -38,27 +32,14 @@ with open('courseData.csv', newline='') as csvfile:
             row["SemesterOffered"], 
             row["Time"], 
             row["Days"], 
-            row["GenEd"] if row["GenEd"] else ""
+            row["GenEd"] if row["GenEd"] else "",
+            row["RequiredFor"] if row["RequiredFor"] else ""
         ))
 
 cur.executemany("""
 INSERT OR REPLACE INTO Courses
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 """, courses_data)
-
-reqs_data = []
-with open('majorRequirements.csv', newline='') as csvfile:
-    reader = csv.DictReader(csvfile)
-    for row in reader:
-        reqs_data.append((
-            row["CourseID"], 
-            row["Major"]
-        ))
-
-cur.executemany("""
-INSERT OR REPLACE INTO Requirements
-VALUES (?, ?)
-""", reqs_data)
 
 con.commit()
 con.close()
