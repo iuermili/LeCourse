@@ -10,9 +10,29 @@ We built a web application with a React frontend and a Python FastAPI backend ut
 
 ## User Guide
 
-LeBron James will guide you through your course selection in this AI-powered course selection tool. Simply select your major and type in what classes you have already been taken. At this point, classes unavailable due to insufficient prerequisites will be filtered out. Then, you will be taken to the dashboard in which you can choose to filter data by category you want to fill (GenEd, major), or even tell AI Lebron what classes you might be interested in. The tool is most powerful when combining filtering functionality with AI functionality, allowing you to narrow down exactly the courses you want.
+LeBron James will guide you through your course selection in this AI-powered course selection tool. Simply select your major and type in what classes you have already taken. At this point, classes unavailable due to insufficient prerequisites, and the classes that you have already taken will be filtered out. Then, you will be taken to the dashboard in which you can tell AI Lebron what classes you might be interested in. Based on your interests, AI Lebron will suggest courses to you. Finally, you have the option to hold onto the suggested courses, and even print out a schedule with all the classes you have selected in a pdf file.
 
 ## Usage
+
+You will need to run both the frontend and backend for the full LeCourse experience. This can be done on the same machine, so feel free to try LeCourse out!
+
+### Frontend Setup
+
+### Backend Setup
+
+```
+API_KEY=GRAB_THIS_FROM_GOOGLE_AI_STUDIO
+GEMINI_MODEL=ALSO_GRAB_THIS_FROM_GOOGLE_AI_STUDIO
+```
+> In the `/backend` directory, create a `.env` file with the following format. As specified in `/backend/.gitignore`, this file will be ignored by git. Replace the dummy values with a proper Google AI api key and Gemini model.
+```
+pip install uvicorn pydantic fastapi typing sqlite3 dotenv google.generativeai
+```
+> Run this command to install all the libraries for the Python scripts. 
+```
+uvicorn app:app --reload
+```
+> Run this command to run the backend, the default is be on `http://localhost:8000`.
 
 ## Our process
 
