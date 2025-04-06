@@ -14,6 +14,8 @@ LeBron James will guide you through your course selection in this AI-powered cou
 
 ## Usage
 
+You will need to run both the frontend and backend to try LeCourse. This can be done on the same machine, so feel free to try LeCourse out!
+
 ### Frontend Setup
 
 ### Backend Setup
@@ -22,7 +24,7 @@ LeBron James will guide you through your course selection in this AI-powered cou
 API_KEY=GRAB_THIS_FROM_GOOGLE_AI_STUDIO
 GEMINI_MODEL=ALSO_GRAB_THIS_FROM_GOOGLE_AI_STUDIO
 ```
-> In the `/backend` directory, create a `.env` file with the following format. As specified in `/backend/.gitignore`, this file will be ignored by git.
+> In the `/backend` directory, create a `.env` file with the following format. As specified in `/backend/.gitignore`, this file will be ignored by git. Replace the dummy values with a proper Google AI api key and Gemini model.
 ```
 pip install uvicorn pydantic fastapi typing sqlite3 dotenv google.generativeai
 ```
