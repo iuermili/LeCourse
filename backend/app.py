@@ -34,49 +34,35 @@ async def call_ollama(prompt: str):
         payload["context"] = CONTEXT # use the context (course data)
     # add the messages to pass to ollama
     payload["messages"] = messages
-
+    response = await requests.post(OLLAMA_API_URL, json=payload, timeout=120) # increase timeout if needed
     try:
-        response = await requests.post(OLLAMA_API_URL, json=payload, timeout=120) # increase timeout if needed
         response.raise_for_status() # raise an exception for bad status codes
+    except requests.exceptions.RequestException as e:
+        print(f"Error calling Ollama chat: {e}")
+        raise HTTPException(status_code=401, detail=f"Failed to communicate with Ollama service: {e}")
+    else:
         response_data = response.json()
-
         # store the context after the prompt to remember the course data
         if "context" in response_data and CONTEXT is None:
-             CONTEXT = response_data["context"]
+            CONTEXT = response_data["context"]
 
         # extract the response message
         if "message" in response_data and "content" in response_data["message"]:
              return response_data["message"]["content"]
         else:
-             return "Error: Could not parse chat response."
-        
-    except requests.exceptions.RequestException as e:
-        print(f"Error calling Ollama chat: {e}")
-        raise HTTPException(status_code=503, detail=f"Failed to communicate with Ollama service: {e}")
-    except Exception as e:
-        print(f"Error processing Ollama chat response: {e}")
-        raise HTTPException(status_code=500, detail=f"Error processing response from Ollama chat: {e}")
+            return None
+    
 
 # fastapi deserializes json automatically
 @app.post("/init_student", response_model=StudentInfoResponse)
 # receive request.undergrad, request.major, request.courses_taken
 async def init_student(request: StudentInfoRequest):
-    # parses a raw string of class listings into structured JSON.
-    prompt = f"""You are an expert academic transcript parser. Analyze the following list of courses taken by a student. 
-    Extract the course codes (e.g., CS101). Format the output strictly as a JSON string containing a list of objects, 
-    where each object has a "code" key. If you cannot extract a code, you can omit the key or set it to null. Output ONLY
-    the JSON string, without any introductory text, explanations, or markdown formatting.
-    Input Text:
-    {request.courses_taken}
-    JSON Output:
-    """
-    model_output = await call_ollama(prompt)
     try:
-
-    courses_taken = await call_ollama(init_student_test_prompt + request.courses_taken)
-    try:
+        courses_taken_str = await call_ollama(init_student_test_prompt + request.courses_taken)
+        if not courses_taken_str:
+            raise HTTPException(status_code=400, detail="Could not process courses taken.")
         # should return string class IDs separated by commas
-        courses_taken = courses_taken.split(",")
+        courses_taken = courses_taken_str.split(",")
 
         # TODO: verify each course
 
@@ -103,16 +89,28 @@ async def init_student(request: StudentInfoRequest):
         WHERE CourseID = ?
         """, courses_data)
 
-        # TODO make sure you send properly created list of CourseInfo
-        return StudentInfoResponse()
-        return StudentInfoResponse(InitResponse=courses_taken_to_send)
+        con.commit()
 
-    except json.JSONDecodeError:
-        print(f"Failed to decode JSON from model output: {model_output}")
-        raise HTTPException(status_code=500, detail="Model did not return valid JSON.")
-    except ValueError as e:
-         print(f"Validation Error: {e}. Model output: {model_output}")
-         raise HTTPException(status_code=500, detail=f"Model output validation failed: {e}")
+        # TODO make sure you send properly created list of CourseInfo
+        return StudentInfoResponse(init_response=courses_taken_to_send)
+    except HTTPException as e:
+        print(f"Caught HTTPException: {e.detail}")
+        raise e
+    except sqlite3.DatabaseError as e:
+        print(f"Database error occurred: {e}")
+        # Optionally re-raise or return an error response depending on your needs
+        raise HTTPException(status_code=500, detail="Database error occurred.")
+    except OperationalError as e:
+        print(f"Operational error occurred: {e}")
+        raise HTTPException(status_code=500, detail="Database operational error occurred.")
+    except Exception as e:
+        print(f"Unexpected error: {e}")
+        raise HTTPException(status_code=500, detail="An unexpected error occurred.")
+    finally:
+        # Close the connection, even if there was an error
+        if con:
+            con.close()
+
 
 @app.post("/fetch_classes", response_model=CourseFilterResponse)
 async def fetch_classes(request: CourseFilterRequest):
@@ -124,30 +122,6 @@ async def fetch_classes(request: CourseFilterRequest):
     return CourseFilterResponse(llm_indentified_criteria=model_output, courses_to_display=[])
     
 courses_tested_ex = 'CS101,math233, Luffy21 eNg201, CS101, MATH202'
-init_student_test_prompt = f"""
-    You are an expert academic transcript parser. Analyze the following list of courses taken by a student. 
-    Extract the course ids (e.g., PHYS301). Format the output strictly as list of course ids separated by commas.
-    If you cannot match a course with course data provided earlier, do not include it. If no courses are matched 
-    return ''.Output ONLY the comma separated course ids in a string, without any introductory text, explanations, 
-    or markdown formatting. 
-    Input Text:
-"""
-interested_topics_ex = 'CS101,math233, Luffy21 eNg201, CS101, MATH202'
-fetch_classes_test_prompt = f"""
-    You are an academic advisor assistant. Based on the student's interests provided below, identify which of 
-    the listed courses they have already taken might be relevant to those interests. List ONLY the course ids (e.g., CS 101) 
-    of the relevant classes, separated by commas. Do not include explanations or any other text. If no courses seem relevant, 
-    output 'None'.
-    Student Interests:
-    {interested_topics_ex}
-    Relevant Course Codes:
-"""
-async def test(prompt):
-    output = await call_ollama(prompt)
-    print(output)
-
-test(init_student_test_prompt)
-
 
 # frontend js code for reference
 '''
