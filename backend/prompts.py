@@ -17,7 +17,6 @@ init_student_prompt = f"""
     or markdown formatting. 
     Input Text:
 """
-
 fetch_classes_prompt = f"""
     You are an academic advisor assistant. Based on the student's interests provided below, identify which of 
     the listed courses they have already taken might be relevant to those interests. List ONLY the course ids (e.g., CS 101) 
