@@ -5,13 +5,14 @@ from typing import List, Tuple
 class CourseInfo(BaseModel):
     code: str # e.g. 'CS101'
     name: str # e.g. 'Intro to Computer Science'
+    field: str #  e.g. 'Computer Science'
     credits: int # e.g. 3
     prerequisites: str # e.g. 'Pre-Calculus' or '' (our data only has at most 1 prereq per class)
     # TODO regenerate data to be am/pm instead of military time
-    timing : str # e.g. '08:00-08:50'
+    time : str # e.g. '08:00-08:50'
     days : str  # e.g. 'MWF'
-    gened_satisfied: str # e.g. 'Arts & Humanities' or '' (our data only has at most 1 gened fulfilled per class)
-    major_satisfied: str # e.g. 'Computer Science'
+    gened: str # e.g. 'Arts & Humanities' or '' (our data only has at most 1 gened fulfilled per class)
+
 
 # models to work with the /init_student endpoint
 class StudentInfoRequest(BaseModel):

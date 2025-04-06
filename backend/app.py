@@ -73,7 +73,7 @@ async def init_student(request: StudentInfoRequest):
         SELECT CreditHours, GenEd
         FROM Courses
         WHERE CourseID = ?
-        """, courses_data)
+        """, courses_taken)
 
         courses_taken_to_send = cur.fetchall()
         # (credit hours, GenEd)
@@ -82,7 +82,7 @@ async def init_student(request: StudentInfoRequest):
         cur.executemany("""
         DELETE FROM Courses
         WHERE CourseID = ?
-        """, courses_data)
+        """, courses_taken)
 
         con.commit()
 
@@ -117,6 +117,24 @@ async def fetch_classes(request: CourseFilterRequest):
     return CourseFilterResponse(llm_indentified_criteria=model_output, courses_to_display=[])
     
 courses_tested_ex = 'CS101,math233, Luffy21 eNg201, CS101, MATH202'
+
+def filterData(fields: list[str]) -> list[CourseInfo]:
+    
+    conn = sqlite3.connect('CourseScheduler.db')
+    cursor = conn.cursor()
+
+    placeholders = ','.join('?' for _ in len(fields))
+
+    cursor.execute(
+        f"SELECT * FROM Courses WHERE Field IN ({placeholders})", fields)
+
+    rows = cursor.fetchall()
+    result = [CourseInfo(*row) for row in rows]
+
+    conn.close()
+    return result
+
+
 
 # frontend js code for reference
 '''
