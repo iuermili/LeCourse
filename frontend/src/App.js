@@ -1,65 +1,42 @@
 import React, { useState, useRef, useEffect } from "react"; // Fundamental Library for React
 import { motion } from "framer-motion";                     // Animation Library
 import feather from "feather-icons";                        // Library for Open-Source SVG Icons
-import './App.css'; 
+import './App.css';                                         // File that simplifies CSS
+import { make_request, init_student_endpoint_path, fetch_classes_endpoint_path } from './requestMaker.js';
 
 // Starting Animation Functions (3 Parts)
 // Part 1.
-function LeEntrance({ setMoveBooks, moveBooks }) {
+function LeEntrance({ setShowIntro }) {
   return (
     <motion.div
       initial={{ x: -1200, y: 0, opacity: 0 }}
-      animate={{ x: -300, opacity: 1 }}
-      transition={{ duration: 2 }}
-      style={{ position: "relative", overflow: "visible" }}
-      onAnimationComplete={() => setMoveBooks(true)}
+      animate={{ x: 100, opacity: 1 }}
+      transition={{ duration: 6 }}
+      style={{ position: "relative", overflow: "visible", display: "flex", flexDirection: "row", alignItems: "flex-end", gap: "100px"}}
+      onAnimationComplete={() => setShowIntro(true)}
     >
+      
+      <h1>Introducing LeCourse</h1>
       <img src="/lebron.png" alt="LeBron" style={{ height: "400px" }} />
-      {!moveBooks && (
-        <img
-          src="/books.png"
-          alt="Books"
-          style={{ position: "absolute", top: "50px", left: "0px", height: "50px" }}
-        />
-      )}
     </motion.div>
   );
 }
 
 // Part 2.
-function LeBook({ setShowIntro }) {
-  return (
-    <motion.img
-      src="/books.png"
-      alt="Flying Books"
-      initial={{ opacity: 1 }}
-      animate={{
-        x: [0, 300, 600, 800, 800],
-        y: [0, -100, -120, 100, 100],
-        opacity: [1, 1, 1, 1, 1, 0]
-      }}
-      transition={{ duration: 2 }}
-      style={{ position: "absolute", top: 80, left: 60, height: "60px", zIndex: 1 }}
-      onAnimationComplete={() => setShowIntro(true)}
-    />
-  );
-}
-
-// Part 3.
 function LeShoppingCart() {
   return (
     <motion.img
       src="/cart.png"
       alt="Shopping cart"
-      initial={{ x: 1200, y: 100, opacity: 0 }}
-      animate={{ x: 300, opacity: 1 }}
+      initial={{ x: 600, y: -150, opacity: 0 }}
+      animate={{ x: 100, opacity: 1 }}
       transition={{ duration: 2 }}
-      style={{ height: "200px" }}
+      style={{ height: "100px" }}
     />
   );
 }
 
-// Introduction Screen Functions
+// Introduction Screen Function
 function LeCourseIntro({ setStartAnimation }) {
   const audioRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);  // Track if audio is playing
@@ -76,40 +53,35 @@ function LeCourseIntro({ setStartAnimation }) {
 
   // Replace feather icons in the component when it renders
   useEffect(() => {
-    feather.replace();  // Static icon rendering
+    feather.replace(); 
   }, []);
 
   // Toggle the startAnimations state
   const toggleStartAnimation = () => {
-    setStartAnimation(prevState => !prevState);  // Toggle between true and false
+    setStartAnimation(prevState => !prevState); 
   };
 
   return (
     <motion.div
       initial={{ x: 0, y: 0, opacity: 0, height: 0 }}
-      animate={{ opacity: 1, height: "400px" }}
+      animate={{ opacity: 1, height: "600px" }}
       transition={{ duration: 2 }}
-      style={{ position: "relative", textAlign: "center" }}
+      style={{ position: "relative", textAlign: "center"}}
     >
       {/* LeBron Image */}
-      <img src="/lebron_intro.jpg" alt="LeBron Smiling" style={{ height: "300px" }} />
+      <img src="/lebron_intro.jpg" alt="LeBron Smiling" style={{ width: "600px" }} />
 
       {/* Subtitles + Play/Pause Button */}
-      <div style={{ marginTop: "1rem", display: "flex", alignItems: "center", justifyContent: "center", gap: "1rem" }}>
+      <div style={{ marginTop: "1rem", display: "flex", alignItems: "center", justifyContent: "center", gap: "1rem", width: "600px"}}>
         
-        <button
-          onClick={handlePlayPause}
-          style={{padding: "0.5rem 1rem", background: "#fff", color: "#000", border: "none", borderRadius: "6px", cursor: "pointer"}}
-        >
-          <i data-feather="message-circle"></i>
+        <button onClick={handlePlayPause} style={{borderRadius: "50%", width: "100px", height: "50px", padding: "0px"}}>
+          <i data-feather="volume-2"></i>
         </button>
 
-        <p style={{ fontSize: "1.25rem", background: "rgba(255,255,255,0.2)", padding: "0.5rem 1rem", borderRadius: "8px" }}>
-          I am LeCourse, and I'll be helping you schedule your classes. I've had coaches, mentors, and teammates. Now you got me. Let's do this.
-        </p>
+        <p className="subtitles">I am LeCourse, and I'll be helping you schedule your classes. I've had coaches, mentors, and teammates. Now you got me. Let's do this.</p>
 
         <div className="next">
-          <button onClick={toggleStartAnimation}>Next</button>
+          <button onClick={toggleStartAnimation}>NEXT</button>
         </div>
 
         <audio ref={audioRef} src="/audio.mp3" />
@@ -119,65 +91,7 @@ function LeCourseIntro({ setStartAnimation }) {
   );
 }
 
-// Main Interface Functions
-function PastCoursesScreen() {
-  const [courseInput, setCourseInput] = useState("");
-  const [courses, setCourses] = useState([]);
-
-  const handleInputChange = (event) => {
-    setCourseInput(event.target.value);
-  };
-
-  const handleAddCourse = () => {
-    if (courseInput.trim() !== "") {
-      setCourses([...courses, courseInput.trim()]);
-      setCourseInput(""); // Clear input after adding
-    }
-  };
-
-  const handleKeyPress = (event) => {
-    if (event.key === "Enter") {
-      handleAddCourse();
-    }
-  };
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 100 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 1 }}
-      style={{ textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100vh" }}
-    >
-      <div style={{ marginBottom: "40px" }}>
-        <h2>Enter your past courses</h2>
-        <span style={{ fontSize: "1.2rem", color: "white", display: "block", marginTop: "5px" }}>
-          Ex. CS101, MATH101, PHYS101
-        </span>
-      </div>
-
-      <div className="input">
-        <input
-          type="text"
-          value={courseInput}
-          onChange={handleInputChange}
-          onKeyPress={handleKeyPress}
-          placeholder="Enter course name"
-        />
-        <button onClick={handleAddCourse}> Add Course</button>
-      </div>
-
-      {courses.length > 0 && (
-        <div style={{ marginTop: "100px", width: "80%", border: '6px solid #ccc', padding: '10px', borderRadius: '5px' }}>
-          <h3>Entered Courses:</h3>
-          <p style={{ whiteSpace: "pre-wrap", wordBreak: 'break-word' }}>
-            {courses.join(", ")}
-          </p>
-        </div>
-      )}
-    </motion.div>
-  );
-}
-
+// Select Major Screen Function
 function SelectMajor({ onMajorChange }) {
   const majors = ["Biology", "Chemistry", "Computer Science", "Economics", "History", "Mathematics", "Physics", "Psychology"];
   const [selectedMajor, setSelectedMajor] = useState("");
@@ -196,7 +110,7 @@ function SelectMajor({ onMajorChange }) {
         value={selectedMajor}
         onChange={handleMajorChange}
       >
-        <option value="">Select a major</option>
+        <option value="">Select your major</option>
         {majors.map((major) => (
           <option key={major} value={major}>
             {major}
@@ -204,6 +118,57 @@ function SelectMajor({ onMajorChange }) {
         ))}
       </select>
     </div>
+  );
+}
+
+const major_credits = [];
+
+function PastCoursesScreen({ major, onCoursesSubmit }) { // Add major as prop
+  const [coursesInput, setCoursesInput] = useState('');
+
+  const handleInputChange = (event) => {
+    setCoursesInput(event.target.value.replace(/[\r\n\t]/g, ''));
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 100 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 1 }}
+      style={{
+        textAlign: 'center',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '100vh',
+      }}
+    >
+      <div style={{ marginBottom: '40px' }}>
+        <h2>Enter your past courses</h2>
+        <span style={{ fontSize: '1.2rem', color: 'white', display: 'block', marginTop: '5px' }}>
+          Ex. CS101, MATH101, PHYS101
+        </span>
+      </div>
+
+      <div className="input">
+        <textarea
+          value={coursesInput}
+          onChange={handleInputChange}
+          placeholder="Enter courses separated by commas"
+          style={{
+            width: '500px',
+            height: '400px',
+            padding: '20px',
+            fontSize: '1.2rem',
+            borderRadius: '20px',
+            resize: 'none',
+            textAlign: 'center',
+            overflow: 'hidden',
+          }}
+        />
+      </div>
+    </motion.div>
   );
 }
 
@@ -231,8 +196,14 @@ const CourseCard = ({ course, selectedCourses, setSelectedCourses }) => {
       </label>
       <div style={{ paddingLeft: '25px' }}>
         <h3>{course.code}: {course.name}</h3>
+        <p>{course.time}, {course.days}</p>
         <p>Credits: {course.credits}</p>
-        {course.requirements_satisfied.length > 0 && (
+        {course.field && (
+          <div>
+            <p><strong>Major Satisfied: </strong>{course.field}</p>
+          </div>
+        )}
+        {course.requirements_satisfied && course.requirements_satisfied.length > 0 && (
           <div>
             <p><strong>Requirements Satisfied: </strong>{course.requirements_satisfied.join(', ')}</p>
           </div>
@@ -246,7 +217,7 @@ const CourseCard = ({ course, selectedCourses, setSelectedCourses }) => {
 const CourseList = ({ courseInfoList, selectedCourses, setSelectedCourses }) => {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', justifyContent: 'center' }}>
-      {courseInfoList.map((course, index) => (
+      {courseInfoList && courseInfoList.map((course, index) => ( // Check if courseInfoList exists
         <CourseCard
           key={index}
           course={course}
@@ -258,7 +229,7 @@ const CourseList = ({ courseInfoList, selectedCourses, setSelectedCourses }) => 
   );
 };
 
-function createRequirementTable(requirements, filters, setFilters) {
+function createRequirementTable({fetchFilteredCourses, requirements, filters, setFilters, selectedCourses, courseInfoList, setCourseInfoList}) {
   const gridStyle = {
     display: 'grid',
     gridTemplateColumns: 'repeat(3, 1fr)',
@@ -283,10 +254,30 @@ function createRequirementTable(requirements, filters, setFilters) {
   const handleFilterChange = (requirement) => (event) => {
     if (event.target.checked) {
       setFilters([...filters, requirement]);
+      fetchFilteredCourses();
     } else {
       setFilters(filters.filter((filter) => filter !== requirement));
+      fetchFilteredCourses();
     }
   };
+
+  const requirementCounts = {};
+  selectedCourses.forEach((courseCode) => {
+    const course = courseInfoList.find((c) => c.code === courseCode);
+    if (course && course.requirements_satisfied) {
+      course.requirements_satisfied.forEach((req) => {
+        requirementCounts[req] = (requirementCounts[req] || 0) + course.credits;
+      });
+    }
+  });
+
+  let totalCredits = 0;
+  selectedCourses.forEach((courseCode) => {
+    const course = courseInfoList.find((c) => c.code === courseCode);
+    if (course) {
+      totalCredits += course.credits;
+    }
+  });
 
   return (
     <div style={gridStyle}>
@@ -301,107 +292,68 @@ function createRequirementTable(requirements, filters, setFilters) {
           {headerText}
         </div>
       ))}
-      {requirements.map((requirement, index) => (
-        <React.Fragment key={`row-${index}`}>
-          <div style={cellStyle}>{requirement}</div>
-          <div style={cellStyle}>{requirement === 'Required' ? '' : '/6'}</div> {/* Display "/6" except for "Required" */}
-          <div style={cellStyle}>
-            <input
-              type="checkbox"
-              checked={filters.includes(requirement)}
-              onChange={handleFilterChange(requirement)}
-            />
-          </div>
-        </React.Fragment>
-      ))}
+      {requirements.map((requirement, index) => {
+        let count = requirementCounts[requirement] || 0;
+        let displayCount = requirement === 'Required' ? '' : `${count}/6`;
+        if (requirement === 'Total') {
+          displayCount = `${totalCredits}/120`;
+        }
+
+        return (
+          <React.Fragment key={`row-${index}`}>
+            <div style={cellStyle}>{requirement}</div>
+            <div style={cellStyle}>{displayCount}</div>
+            <div style={cellStyle}>
+              {requirement !== 'Total' && (
+                <input
+                  type="checkbox"
+                  checked={filters.includes(requirement)}
+                  onChange={handleFilterChange(requirement)}
+                />
+              )}
+            </div>
+          </React.Fragment>
+        );
+      })}
     </div>
   );
 }
 
-function ChooseClasses() {
-  const [inputValue, setInputValue] = useState('');
+function ChooseClasses({ fetchFilteredCourses, courseInfoList, setCourseInfoList, filters, setFilters, interests, setInterests }) {
+  // const [inputValue, setInputValue] = useState('');
   const [selectedCourses, setSelectedCourses] = useState([]);
-  const [filters, setFilters] = useState([]); // State to store selected filters
+
 
   const handleInputChange = (e) => {
-    setInputValue(e.target.value);
+    setInterests(e.target.value);
   };
 
   const handleButtonClick = () => {
-    console.log('Button clicked with input:', inputValue);
-    console.log('Selected filters:', filters); // Log the selected filters
-    // Here you would send the filters to the backend
-    // fetch('/api/filters', {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    //   body: JSON.stringify({ filters }),
-    // })
-    //   .then((response) => response.json())
-    //   .then((data) => console.log('Filters sent:', data))
-    //   .catch((error) => console.error('Error:', error));
-    setInputValue('');
+    fetchFilteredCourses();
+    setInterests("")
   };
 
-  const requirementsData = ['A&H', 'Natural Science', 'World Culture', 'Required'];
 
-  const courseInfoList = [
-    {
-      code: 'CSCI-H211',
-      name: 'Intro to Computer Science',
-      credits: 3,
-      requirements_satisfied: ['WC', 'A&H', 'INTENSIVE WRITING'],
-      components: [
-        [{ type: 'Lecture', instructor: 'Dr. Smith', time: '10:00 AM' }],
-        [{ type: 'Discussion', instructor: 'TA Brown', time: '2:00 PM' }],
-      ],
-    },
-    {
-      code: 'MATH-M118',
-      name: 'Calculus I',
-      credits: 4,
-      requirements_satisfied: ['QUANTITATIVE REASONING'],
-      components: [
-        [{ type: 'Lecture', instructor: 'Prof. Lee', time: '9:00 AM' }],
-      ],
-    },
-    {
-      code: 'CSCI-H212',
-      name: 'Discrete Structures',
-      credits: 3,
-      requirements_satisfied: ['CSCI'],
-      components: [
-        [{ type: 'Lecture', instructor: 'Dr. Jones', time: '1:00 PM' }],
-      ],
-    },
-  ];
 
-  const totalCredits = selectedCourses.reduce((total, courseCode) => {
-    const course = courseInfoList.find((c) => c.code === courseCode);
-    return total + (course ? course.credits : 0);
-  }, 0);
+  const requirementsData = ['A&H', 'Natural Science', 'World Culture', 'Required', 'Total'];
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', width: '100%' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
       <div className="container">
-        <div className="columns" style={{ padding: "0px", background: "none", overflow: "hidden" }}>
+        <div className="columns" style={{ padding: "0px", background: "none" }}>
           <div className="subColumns">
             <h3>Selected Courses</h3>
-            <ul>
+            <ul className="course-list">
               {selectedCourses.map((course, index) => (
-                <li key={index}>{course}</li>
+                <li key={index} className="course-item">{course}</li>
               ))}
             </ul>
-            <p><strong>Total Credits: {totalCredits}</strong></p>
           </div>
-
           <div className="subColumns">
             <h3>Requirements</h3>
-            {createRequirementTable(requirementsData, filters, setFilters)}
+            {createRequirementTable({fetchFilteredCourses, requirementsData, filters, setFilters, selectedCourses, courseInfoList, setCourseInfoList})}
           </div>
         </div>
-
         <div className="columns">
           <h3>Suggested Courses</h3>
           <CourseList
@@ -411,11 +363,10 @@ function ChooseClasses() {
           />
         </div>
       </div>
-
       <div className="input">
         <input
           type="text"
-          value={inputValue}
+          value={interests}
           onChange={handleInputChange}
         />
         <button onClick={handleButtonClick} style={{ padding: '10px', marginLeft: '10px' }}>
@@ -430,55 +381,90 @@ function App() {
   const [moveBooks, setMoveBooks] = useState(false);
   const [showIntro, setShowIntro] = useState(false);
   const [startAnimations, setStartAnimation] = useState(true);
+  const [dunkComplete, setDunkComplete] = useState(false); // New state
+  const [showTitle, setShowTitle] = useState(false); // New state
   const [pastCourses, setPastCourses] = useState([]);
   const [major, setSelectedMajor] = useState('');
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isSendingData, setIsSendingData] = useState(false);
+  const [courseInfoList, setCourseInfoList] = useState([]);
+  const [filters, setFilters] = useState([]);
+  const [interests, setInterests] = useState('');
+
+  useEffect(() => {
+    if (dunkComplete) {
+      setTimeout(() => {
+        setShowTitle(true);
+      }, 1000); // Delay title appearance
+    }
+  }, [dunkComplete]);
 
   // Array of functions to be shown
   const functions = [
-    () => <PastCoursesScreen onCoursesSubmit={setPastCourses} />,
     () => <SelectMajor onMajorChange={setSelectedMajor} />,
-    () => <ChooseClasses />,
+    () => <PastCoursesScreen major={major} onCoursesSubmit={setPastCourses} />, // Pass major and onCoursesSubmit
+    () => <ChooseClasses fetchFilteredCourses={fetchFilteredCourses} courseInfoList={courseInfoList} filters={filters} setFilters={setFilters} interests={interests} setInterests={setInterests}/>,
   ];
 
-  const sendDataToBackend = () => {
+  const sendDataToBackend = async () => {
     const userData = {
       major: major,
-      courses: pastCourses,
+      courses_taken: pastCourses.join(', '), // Join courses into a comma-separated string
     };
 
-    fetch('/api/user-data', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(userData),
-    })
-      .then((response) => response.json())
-      .then((data) => console.log('Data sent:', data))
-      .catch((error) => console.error('Error:', error));
+    try {
+      const responseData = await make_request(userData, init_student_endpoint_path);
+      console.log('Backend response:', responseData);
+      setCourseInfoList(responseData.all_courses_not_taken)
+      // Handle the response data (e.g., store it in state)
+    } catch (error) {
+      console.error('Failed to send data:', error);
+      // Handle errors (e.g., show an error message)
+    }
   };
 
-  const handleNext = () => {
-    sendDataToBackend(); // Send data before transitioning
-    setCurrentIndex((prevIndex) => prevIndex + 1);
+  const handleNext = async () => { // Make handleNext async
+    if (currentIndex === 1) { // Only make a request when the user is ready to move on to course-selection
+      setIsSendingData(true); // Disable the button
+      try {
+        await sendDataToBackend(); // Await the backend request
+        setCurrentIndex((prevIndex) => prevIndex + 1);
+      } catch (error) {
+        console.error("Error sending data:", error);
+        // Handle the error (e.g., show an error message to the user)
+      }
+    } else if (currentIndex === 0 && major !== '') {
+      setCurrentIndex((prevIndex) => prevIndex + 1);
+    } else {
+      // major has not been selected, so don't do anything
+    }
+  };
+
+  const fetchFilteredCourses = async () => {
+    try {
+      const requestData = {
+        criteria: filters,
+        interested_topics: interests,
+      };
+      const fetchedCourses = await make_request(requestData, fetch_classes_endpoint_path);
+      setCourseInfoList(fetchedCourses);
+    } catch (error) {
+      console.error('Error fetching courses:', error);
+    }
   };
 
   useEffect(() => {
-    if (currentIndex === 1 && pastCourses.length > 0) {
-      sendDataToBackend(pastCourses);
-    } else if (currentIndex === 2 && major) {
-      sendDataToBackend(pastCourses);
+    if (filters.length > 0 || interests) {
+      fetchFilteredCourses();
     }
-  }, [currentIndex, pastCourses, major]);
+  }, [filters, interests]);
 
   return (
     <div id='root'>
       {/* Starting Animations */}
       {startAnimations && (
         <>
-          {!showIntro && <LeEntrance setMoveBooks={setMoveBooks} moveBooks={moveBooks} />}
-          {moveBooks && !showIntro && <LeBook setShowIntro={setShowIntro} />}
+          {!showIntro && <LeEntrance setShowIntro={setShowIntro}/>}
           {!showIntro && <LeShoppingCart />}
           {showIntro && <LeCourseIntro setStartAnimation={setStartAnimation} />}
         </>
@@ -496,9 +482,9 @@ function App() {
           {/* Render the current function/content */}
           {functions[currentIndex]()}
         </motion.div>
-        {currentIndex < functions.length - 1 && (
+        {currentIndex < functions.length - 1 && (    // Disable next button when on last page or communicating with back-end
           <div className="next">
-            <button onClick={handleNext}>Next</button>
+            <button onClick={isSendingData ? () => {} : handleNext}>NEXT</button>
           </div>
         )}
         </>

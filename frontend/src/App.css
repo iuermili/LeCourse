@@ -1,14 +1,16 @@
+/* Customization */
 :root {
   --font-color: white;
   --main-background: #552583;
   --button-color: #D4A000;
   --border-color: #ccc;
   --course-background: rgba(255, 255, 255, 0.4);
-  --selected-course-background: rgba(255, 255, 255, 0.6);
+  --selected-course-background: rgba(212, 160, 0, 0.4);
   --course-font-color: white;
   --columns-background: rgba(255, 255, 255, 0.4);
 }
 
+/* Scrollbar */
 ::-webkit-scrollbar {
   width: .3em;
 }
@@ -23,6 +25,7 @@
   background: var(--button-color);
 }
 
+/* Main */
 #root {
   height: 100vh;
   width: 100vw;
@@ -35,10 +38,18 @@
   overflow: hidden;
 }
 
+
+/* Heading */
 h2 {
   font-size: 2.5rem;
 }
 
+/* Images */
+img {
+  border-radius: 4px;
+}
+
+/* Input Bars */
 .input {
   display: flex;
   align-items: center;
@@ -58,20 +69,29 @@ input {
 input[type="checkbox"] {
   width: 20px;
   height: 20px;
-  border: 2px solid #333;
+  border: 1px solid var(--border-color);
   background-color: #fff;
   border-radius: 5px;
   cursor: pointer;
 }
 
 input[type="checkbox"]:checked {
-  background-color: lightblue;
+  background-color: var(--button-color);
 }
 
 input ::placeholder {
   color: var(--border-color)
 }
 
+.entered-courses {
+  margin-top: 40px;
+  width: 80%;
+  border: 1px solid var(--border-color);
+  padding: 10px;
+  border-radius: 5px;
+}
+
+/* Buttons */
 button {
   padding: 8px 16px;
   background: var(--button-color);
@@ -79,6 +99,13 @@ button {
   cursor: pointer;
   border-radius: 20px;
   color: var(--font-color);
+  font-weight: 600;
+  letter-spacing: 1px;
+  transition: all 0.4s ease-in-out;
+}
+
+select option:hover { 
+  background: var(--selected-course-background) !important;
 }
 
 .next {
@@ -87,7 +114,16 @@ button {
   right: 20px;
 }
 
+/* Subtitles */
+.subtitles {
+  background: var(--course-background);
+  padding: 0.5rem 1rem; 
+  border-radius: 4px;
+}
+
+/* Drop-downs */
 select {
+  appearance: none;
   border: 1px solid var(--border-color);
   width: 400px;
   margin-top: 20px;
@@ -98,7 +134,19 @@ select {
   outline: none;
 }
 
+select::after {
+  content: "";
+  width: 0.8em;
+  height: 0.5em;
+  background-color: black;
+  clip-path: polygon(100% 0%, 0 0%, 50% 100%);
+}
 
+option:hover {
+  background-color: var(--button-color);
+}
+
+/* Courses */
 .course-card {
   border: 1px solid var(--border-color);
   padding: 15px;
@@ -112,17 +160,38 @@ select {
   background-color: var(--selected-course-background); 
 }
 
+.course-list {
+  display: flex;
+  flex-wrap: wrap; 
+  gap: 10px; 
+  padding: 20px; 
+  list-style-type: none; 
+}
+
+.course-item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 25px;
+  font-size: 14px;
+  background-color: var(--selected-course-background); 
+  text-align: center;
+  padding: 5px 10px;
+}
+
+/* Main Interface Flex-boxes */
 .container {
   display: flex;
+  width: 80vw;
   gap: 10px;
-  width: 100%;
-  height: 75vh;
   flex-flow: column;
+  height: 70vh;
+  overflow: auto;
+  align-items: stretch;
 }
 
 .columns {
-  width: 100%;
-  overflow-y: scroll;
+  overflow-y: auto;
   padding: 10px;
   text-align: center;
   background-color: var(--columns-background);
@@ -131,17 +200,18 @@ select {
   display: flex;
   flex-flow: column;
   gap: 10px;
+  flex-grow: 1;
 }
 
 .subColumns {
-  width: 100%;
-  height: 100%;
-  min-height: 200px;
   background-color: var(--columns-background);
   border-radius: 4px;
+  padding: 10px;
+  overflow-y: auto;
+  height: 100%;
 }
 
-/* Medium devices (tablets, 768px and up) */
+/* Responsiveness */
 @media (min-width: 768px) {
   .container {
     flex-flow: row;
