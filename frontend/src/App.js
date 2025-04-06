@@ -272,16 +272,10 @@ function ChooseClasses({ fetchFilteredCourses, courseInfoList, setCourseInfoList
 
   const requirementsData = ['Arts & Humanities', 'Natural Science', 'World Culture', 'Required', 'Total'];
 
-
-  // Function to handle export for JSON
-  const handleExport = () => {
-    const dataStr = JSON.stringify(selectedCourses, null, 2); // format JSON with indentation
-    const blob = new Blob([dataStr], { type: 'application/json' });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = 'selectedCourses.json'; // name of the downloaded file
-    link.click();
-};
+// Replace feather icons in the component when it renders
+useEffect(() => {
+  feather.replace(); 
+}, []);
 
 // Function to handle export
 const generatePDF = () => {
@@ -289,8 +283,9 @@ const generatePDF = () => {
   
   // Constants for positioning and sizing
   const pageWidth = pdf.internal.pageSize.width;
-  const margin = 10;
-  const dayWidth = (pageWidth - 2 * margin) / 5; // 5 days (Mon-Fri)
+  const margin = 20; // Increased from 10
+  const timeColumnWidth = 15; // Added time column width
+  const dayWidth = (pageWidth - 2 * margin - timeColumnWidth) / 5; // 5 days (Mon-Fri)
   const hourHeight = 12;
   const startHour = 8; // 8 AM
   const endHour = 18; // 6 PM
@@ -305,12 +300,12 @@ const generatePDF = () => {
   
   // Draw calendar header (days)
   pdf.setFillColor(220, 220, 220);
-  pdf.rect(margin, calendarStartY, pageWidth - 2 * margin, 10, 'F');
+  pdf.rect(margin + timeColumnWidth, calendarStartY, pageWidth - 2 * margin - timeColumnWidth, 10, 'F');
   
   pdf.setFontSize(10);
   const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
   days.forEach((day, index) => {
-    pdf.text(day, margin + index * dayWidth + dayWidth / 2 - 10, calendarStartY + 7);
+    pdf.text(day, margin + timeColumnWidth + index * dayWidth + dayWidth / 2 - 10, calendarStartY + 7);
   });
   
   // Draw time slots
@@ -320,16 +315,16 @@ const generatePDF = () => {
     
     // Draw horizontal line for each hour
     pdf.setDrawColor(200, 200, 200);
-    pdf.line(margin, y, pageWidth - margin, y);
+    pdf.line(margin + timeColumnWidth, y, pageWidth - margin, y);
     
     // Add hour label
     const hourLabel = hour <= 12 ? `${hour}:00 AM` : `${hour-12}:00 PM`;
-    pdf.text(hourLabel, margin - 5, y + 3, { align: 'right' });
+    pdf.text(hourLabel, margin + timeColumnWidth - 2, y + 3, { align: 'right' });
   }
   
   // Draw vertical lines to separate days
   for (let i = 0; i <= 5; i++) {
-    const x = margin + i * dayWidth;
+    const x = margin + timeColumnWidth + i * dayWidth;
     pdf.line(x, calendarStartY + 10, x, calendarStartY + 10 + totalHours * hourHeight);
   }
   
@@ -395,7 +390,7 @@ const generatePDF = () => {
       const dayIndex = dayMapping[dayChar];
       if (dayIndex === undefined) return;
       
-      const blockX = margin + dayIndex * dayWidth;
+      const blockX = margin + timeColumnWidth + dayIndex * dayWidth;
       
       // Draw course block
       pdf.setFillColor(230, 240, 255);
@@ -452,11 +447,7 @@ const generatePDF = () => {
                 <li key={index} className="course-item">{course}</li>
               ))}
             </ul> */}
-            <div style={{position: "absolute", bottom: "0px", left: "0px", display: "flex", gap: "10px"}}>
-              <button onClick={generatePDF} style={{borderRadius: "50%", width: "50px", height: "50px", padding: "0px"}}>
-                <i data-feather="file-text"></i>
-              </button>
-            </div>
+            
             
           {/* </div>
           <div className="subColumns">
@@ -473,6 +464,20 @@ const generatePDF = () => {
           />
         </div>
       </div>
+
+      {/* Logo */}
+      <div style={{position: "fixed", top: "20px", left: "20px", width: "50px"}}>
+        <img src="/lebron_funny.png" style={{width: "100%"}}></img>
+      </div>
+
+      {/* Download button */}
+      <div style={{position: "fixed", top: "20px", right: "20px"}}> 
+        <button onClick={generatePDF} style={{borderRadius: "50%", width: "50px", height: "50px", padding: "0px"}}>
+        <i data-feather="download"></i>
+        </button>
+      </div>
+
+      {/* User Prompt button */}
       <div className="input">
         <input
           type="text"
