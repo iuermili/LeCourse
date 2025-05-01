@@ -38,7 +38,7 @@ GEMINI_MODEL=ALSO_GRAB_THIS_FROM_GOOGLE_AI_STUDIO
 ```
 > In the `/backend` directory, create a `.env` file with the following format. As specified in `/backend/.gitignore`, this file will be ignored by git. Replace the dummy values with a proper Google AI api key and Gemini model.
 ```
-pip install uvicorn pydantic fastapi typing sqlite3 dotenv google.generativeai
+pip install uvicorn pydantic fastapi typing dotenv google.generativeai
 ```
 > Run this command to install all the libraries for the Python scripts. 
 ```
